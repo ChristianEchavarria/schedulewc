@@ -1555,34 +1555,17 @@ function renderAnalystComparison(r, fullReport) {
     document.getElementById('personalName').textContent = `Hola, ${r.name}`;
 
     const viewReport = applyViewFilter(fullReport);
-    const rows = [];
-    viewReport.forEach(day => {
-        const shifts = getAnalystShifts(parseSpanishDate(day.date));
-        if (!shifts) return;
-        if (shifts.holiday) {
-            rows.push({ day, holiday: shifts.name });
-        } else {
-            rows.push({
-                day,
-                CHRISTIAN: shifts.find(s => s.person === 'CHRISTIAN'),
-                CRISTHIAN: shifts.find(s => s.person === 'CRISTHIAN')
-            });
-        }
+    // Usa getPersonSchedule → respeta los overrides que edita el Admin (Firestore).
+    const rows = viewReport.map(day => {
+        const d = parseSpanishDate(day.date);
+        return { day, C: getPersonSchedule('CHRISTIAN', d), B: getPersonSchedule('CRISTHIAN', d) };
     });
 
-    const workRows = rows.filter(x => !x.holiday);
-    const holidayCount = rows.length - workRows.length;
-    const tally = (id) => ({
-        late: workRows.filter(x => x[id].code === '10-7').length,
-        early: workRows.filter(x => x[id].code === '8-5').length
-    });
-    const tC = tally('CHRISTIAN'), tB = tally('CRISTHIAN');
-
+    const isWork = s => s && !s.off && !s.holiday;
     document.getElementById('personalStats').innerHTML = `
-        <div class="ps-stat"><span class="ps-stat-num">${workRows.length}</span><span class="ps-stat-lbl">días hábiles</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${holidayCount}</span><span class="ps-stat-lbl">festivos</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${tC.late}·${tC.early}</span><span class="ps-stat-lbl">Christian 10-7·8-5</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${tB.late}·${tB.early}</span><span class="ps-stat-lbl">Cristhian 10-7·8-5</span></div>
+        <div class="ps-stat"><span class="ps-stat-num">${rows.length}</span><span class="ps-stat-lbl">días</span></div>
+        <div class="ps-stat"><span class="ps-stat-num">${rows.filter(x => isWork(x.C)).length}</span><span class="ps-stat-lbl">turnos Christian</span></div>
+        <div class="ps-stat"><span class="ps-stat-num">${rows.filter(x => isWork(x.B)).length}</span><span class="ps-stat-lbl">turnos Cristhian</span></div>
     `;
 
     const breakdownEl = document.getElementById('personalBreakdown');
@@ -1597,12 +1580,16 @@ function renderAnalystComparison(r, fullReport) {
         return;
     }
 
-    const cell = (entry, isMe) => {
-        const cls = entry.code === '10-7' ? 'reinf-late' : 'reinf-early';
-        return `<td class="cmp-cell ${cls}${isMe ? ' cmp-mine' : ''}">
-            <span class="reinf-range">${entry.range}</span>
-            <span class="reinf-badge reinf-badge-${entry.code === '10-7' ? 'late' : 'early'}">${entry.code}</span>
-        </td>`;
+    const cell = (s, isMe) => {
+        let cls = '', inner;
+        if (!s) inner = `<span style="color:#9CA3AF;">—</span>`;
+        else if (s.holiday) inner = `<span class="tds-chip tds-holiday">Festivo · ${s.name || ''}</span>`;
+        else if (s.off) inner = `<span class="tds-chip tds-off">Descanso</span>`;
+        else {
+            cls = s.code === '10-7' ? 'reinf-late' : (s.code === '8-5' ? 'reinf-early' : '');
+            inner = `<span class="reinf-range">${s.label}</span>${s.code ? ` <span class="reinf-badge reinf-badge-${s.code === '10-7' ? 'late' : 'early'}">${s.code}</span>` : ''}`;
+        }
+        return `<td class="cmp-cell ${cls}${isMe ? ' cmp-mine' : ''}">${inner}</td>`;
     };
 
     const head = `
@@ -1616,21 +1603,12 @@ function renderAnalystComparison(r, fullReport) {
             </th>
         </tr>`;
 
-    const body = rows.map(x => {
-        if (x.holiday) {
-            return `
-        <tr class="cmp-holiday-row">
-            <td class="cmp-day">${formatShortDay(x.day.date)}</td>
-            <td class="cmp-holiday" colspan="2"><i data-lucide="palmtree"></i> Festivo · ${x.holiday} — Descanso</td>
-        </tr>`;
-        }
-        return `
+    const body = rows.map(x => `
         <tr>
             <td class="cmp-day">${formatShortDay(x.day.date)}</td>
-            ${cell(x.CHRISTIAN, r.id === 'CHRISTIAN')}
-            ${cell(x.CRISTHIAN, r.id === 'CRISTHIAN')}
-        </tr>`;
-    }).join('');
+            ${cell(x.C, r.id === 'CHRISTIAN')}
+            ${cell(x.B, r.id === 'CRISTHIAN')}
+        </tr>`).join('');
 
     breakdownEl.innerHTML = `<div class="analyst-compare-wrap"><table class="analyst-compare">${head}${body}</table></div>`;
     lucide.createIcons();
