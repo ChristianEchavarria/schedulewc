@@ -39,6 +39,23 @@ const EMAILJS = {
 const PHOTO_BASE = 'https://turnos-wc26.web.app/personal/';
 const ICON_BASE = 'https://turnos-wc26.web.app/email-icons/';
 
+// Overrides de horario que el Admin edita en la web (Firestore). Día a día, si el
+// Admin modificó X día, el correo enviará ese cambio en vez del horario base.
+const FIRESTORE_API_KEY = 'AIzaSyDbXSBMcfmfIMCW1MPUiHERBxwx6Y_g3O8';
+let OVERRIDES = {};
+async function loadOverrides() {
+    const url = `https://firestore.googleapis.com/v1/projects/turnos-wc26/databases/(default)/documents/config/scheduleOverrides?key=${FIRESTORE_API_KEY}`;
+    try {
+        const res = await fetch(url);
+        if (!res.ok) { if (res.status !== 404) console.warn('Firestore overrides HTTP', res.status); return; }
+        const doc = await res.json();
+        const jsonStr = doc && doc.fields && doc.fields.json && doc.fields.json.stringValue;
+        if (jsonStr) { OVERRIDES = JSON.parse(jsonStr) || {}; console.log(`Overrides cargados (${Object.keys(OVERRIDES).length} personas).`); }
+    } catch (e) {
+        console.warn('No se pudieron cargar overrides:', e.message);
+    }
+}
+
 // ── Personas ──
 const PEOPLE = {
     DANY: { name: 'DANY', role: 'Gestor', kind: 'gestor', photo: 'dany.jpg' },
@@ -151,6 +168,9 @@ function analystEntryFor(personId, dateObj) {
 // Christian/Cristhian → lógica definida (10-7/8-5 + festivos). El resto → STAFF_SCHEDULE.
 // Devuelve { label, code?, off?, holiday?, name?, special?, split? } o null si no hay dato.
 function scheduleFor(personId, dateObj) {
+    // Override del Admin (Firestore) tiene prioridad sobre el horario base.
+    const ov = (OVERRIDES[personId] || {})[ymd(dateObj)];
+    if (ov !== undefined) return { label: ov, off: /^(descanso|descansa)$/i.test(ov), override: true };
     if (personId === 'CHRISTIAN' || personId === 'CRISTHIAN') return analystEntryFor(personId, dateObj);
     const day = (STAFF_SCHEDULE[personId] || {})[ymd(dateObj)];
     if (!day) return null;
@@ -285,6 +305,7 @@ const ONLY = (process.env.ONLY_PERSON || '').toUpperCase().split(',').map(s => s
 function skipByFilter(id) { return ONLY.length > 0 && !ONLY.includes(id); }
 
 async function runDaily() {
+    await loadOverrides();
     // Se envía HOY a las 12:00 Colombia el turno del DÍA SIGUIENTE.
     const d = addDays(today(), 1);
     if (!inTournament(d)) { console.log(`El día objetivo ${ymd(d)} está fuera del Mundial. No se envía.`); return; }
@@ -322,6 +343,7 @@ async function runDaily() {
 }
 
 async function runWeekly() {
+    await loadOverrides();
     // Se envía el VIERNES a las 12:00 Colombia el horario de la semana SIGUIENTE (Lun-Dom).
     const d = today();
     const weekStart = addDays(startOfWeek(d), 7);

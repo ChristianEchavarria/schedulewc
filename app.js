@@ -346,13 +346,47 @@ const STAFF_LIST = [
 ];
 const STAFF_BY_ID = Object.fromEntries(STAFF_LIST.map(p => [p.id, p]));
 
+// Overrides de horario editados por el Admin — almacenados en Firestore (compartidos
+// para todos en tiempo real) con respaldo en localStorage por si Firestore no carga.
 let scheduleOverrides = JSON.parse(localStorage.getItem('staffScheduleOverrides') || '{}');
+
+let _fsOverridesRef = null;
+(function initFirestoreOverrides() {
+    try {
+        firebase.initializeApp({
+            apiKey: 'AIzaSyDbXSBMcfmfIMCW1MPUiHERBxwx6Y_g3O8',
+            authDomain: 'turnos-wc26.firebaseapp.com',
+            projectId: 'turnos-wc26',
+            storageBucket: 'turnos-wc26.firebasestorage.app',
+            messagingSenderId: '839480620308',
+            appId: '1:839480620308:web:178a9fdc901253ecf17e01'
+        });
+        _fsOverridesRef = firebase.firestore().collection('config').doc('scheduleOverrides');
+        // Sincronización en tiempo real: cualquier cambio que guarde el Admin lo ven todos.
+        _fsOverridesRef.onSnapshot(snap => {
+            const data = snap.exists ? snap.data() : null;
+            if (data && typeof data.json === 'string') {
+                try { scheduleOverrides = JSON.parse(data.json) || {}; } catch (e) { /* ignore */ }
+                localStorage.setItem('staffScheduleOverrides', JSON.stringify(scheduleOverrides));
+                if (typeof runAnalysis === 'function') runAnalysis(scheduleData);
+            }
+        }, err => console.warn('Firestore overrides no disponible:', err && err.message));
+    } catch (e) {
+        console.warn('Firebase no inicializó; se usa almacenamiento local.', e && e.message);
+    }
+})();
 
 window.updatePersonSchedule = function (personId, ymdKey, value) {
     if (!scheduleOverrides[personId]) scheduleOverrides[personId] = {};
     if (value && value.trim()) scheduleOverrides[personId][ymdKey] = value.trim();
     else delete scheduleOverrides[personId][ymdKey];
+    if (scheduleOverrides[personId] && Object.keys(scheduleOverrides[personId]).length === 0) delete scheduleOverrides[personId];
     localStorage.setItem('staffScheduleOverrides', JSON.stringify(scheduleOverrides));
+    // Guarda en Firestore para que TODOS vean el cambio (y el correo lo use).
+    if (_fsOverridesRef) {
+        _fsOverridesRef.set({ json: JSON.stringify(scheduleOverrides), updatedAt: Date.now() })
+            .catch(err => alert('No se pudo guardar en la nube: ' + (err && err.message) + '\nEl cambio quedó solo en este equipo.'));
+    }
     runAnalysis(scheduleData);
 };
 

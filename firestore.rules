@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Único documento usado por la app: overrides de horario editados por el Admin.
+    // Lectura pública (la web y el mailer lo leen); escritura abierta solo en este doc.
+    match /config/scheduleOverrides {
+      allow read, write: if true;
+    }
+    // Todo lo demás bloqueado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
