@@ -1951,6 +1951,78 @@ body {
     color: var(--accent-blue);
 }
 
+/* ── Equipo · turnos del día (calendario) ── */
+.team-day-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0.6rem;
+}
+
+.team-day-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 0.7rem;
+}
+
+.team-day-row.tds-mine {
+    border-color: var(--accent-blue);
+    box-shadow: inset 3px 0 0 var(--accent-blue);
+}
+
+.tds-person {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 0;
+}
+
+.tds-person img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.tds-pname { display: flex; flex-direction: column; line-height: 1.1; }
+.tds-pname small { font-size: 0.65rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.3px; }
+
+.tds-chip {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    text-align: right;
+}
+
+.tds-work { background: var(--accent-soft); color: var(--accent-blue); }
+.tds-off { background: var(--surface-muted); color: var(--text-muted); font-style: italic; }
+.tds-holiday { background: var(--status-high-soft); color: var(--status-high); }
+.tds-special { background: #FDF8E6; color: #6a5000; }
+.tds-none { background: var(--surface-muted); color: var(--text-muted); }
+
+.tds-input {
+    width: 150px;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    text-align: right;
+    color: var(--text-primary);
+    background: var(--surface);
+}
+.tds-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: inset 0 0 0 1px var(--accent-blue); }
+
 /* Controles (vista + navegación) dentro de la tarjeta del analista */
 .personal-controls {
     display: flex;

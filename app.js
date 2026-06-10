@@ -272,9 +272,9 @@ const ROLES = [
     { id: 'CHRISTIAN', name: 'Christian E', type: 'Analista', avatar: 'personal/christian.png', isOperator: true, isAnalyst: true },
     { id: 'CRISTHIAN', name: 'Cristhian B', type: 'Analista', avatar: 'personal/cristhian.png', isOperator: true, isAnalyst: true },
     // Nuevos integrantes — horario pendiente de definir (pending: true)
-    { id: 'PABLO', name: 'Pablo', type: 'Analista', avatar: 'personal/Pablo.jpg', isOperator: true, isAnalyst: true, pending: true },
-    { id: 'DUQUE', name: 'Duque', type: 'Analista', avatar: 'personal/Duque.jpg', isOperator: true, isAnalyst: true, pending: true },
-    { id: 'EDWIN', name: 'Edwin', type: 'Líder', avatar: 'personal/Edwin.jpg', isOperator: false, isLeader: true, pending: true },
+    { id: 'PABLO', name: 'Pablo', type: 'Analista', avatar: 'personal/Pablo.jpg', isOperator: true, isAnalyst: true },
+    { id: 'DUQUE', name: 'Duque', type: 'Analista', avatar: 'personal/Duque.jpg', isOperator: true, isAnalyst: true },
+    { id: 'EDWIN', name: 'Edwin', type: 'Líder', avatar: 'personal/Edwin.jpg', isOperator: false, isLeader: true },
     { id: 'ADMIN', name: 'Administrador', type: 'Coordinación', avatar: null, isOperator: false }
 ];
 
@@ -327,6 +327,54 @@ function getAnalystShifts(dateObj) {
         { person: who107, range: '10:00 - 19:00', code: '10-7' },
         { person: who85, range: '08:00 - 17:00', code: '8-5' }
     ];
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Horario unificado del equipo. Christian/Cristhian → lógica definida;
+// resto → window.STAFF_SCHEDULE (archivo). El Admin puede sobrescribir
+// cualquier celda (se guarda en localStorage 'staffScheduleOverrides').
+// ─────────────────────────────────────────────────────────────────────
+const STAFF_LIST = [
+    { id: 'LAURA', name: 'Laura', role: 'Gestor', photo: 'personal/Laura.png' },
+    { id: 'DANY', name: 'Dany', role: 'Gestor', photo: 'personal/dany.jpg' },
+    { id: 'PANCHA', name: 'Pancha', role: 'Gestor', photo: 'personal/Pancha.jpg' },
+    { id: 'CHRISTIAN', name: 'Christian E', role: 'Analista', photo: 'personal/christian.png' },
+    { id: 'CRISTHIAN', name: 'Cristhian B', role: 'Analista', photo: 'personal/cristhian.png' },
+    { id: 'PABLO', name: 'Pablo', role: 'Analista', photo: 'personal/Pablo.jpg' },
+    { id: 'DUQUE', name: 'Duque', role: 'Analista', photo: 'personal/Duque.jpg' },
+    { id: 'EDWIN', name: 'Edwin', role: 'Líder', photo: 'personal/Edwin.jpg' }
+];
+const STAFF_BY_ID = Object.fromEntries(STAFF_LIST.map(p => [p.id, p]));
+
+let scheduleOverrides = JSON.parse(localStorage.getItem('staffScheduleOverrides') || '{}');
+
+window.updatePersonSchedule = function (personId, ymdKey, value) {
+    if (!scheduleOverrides[personId]) scheduleOverrides[personId] = {};
+    if (value && value.trim()) scheduleOverrides[personId][ymdKey] = value.trim();
+    else delete scheduleOverrides[personId][ymdKey];
+    localStorage.setItem('staffScheduleOverrides', JSON.stringify(scheduleOverrides));
+    runAnalysis(scheduleData);
+};
+
+function getPersonSchedule(personId, dateObj) {
+    if (!dateObj) return null;
+    const key = ymd(dateObj);
+    const ov = (scheduleOverrides[personId] || {})[key];
+    if (ov !== undefined) {
+        return { label: ov, off: /^(descanso|descansa)$/i.test(ov), override: true };
+    }
+    if (personId === 'CHRISTIAN' || personId === 'CRISTHIAN') {
+        const s = getAnalystShifts(dateObj);
+        if (!s) return { off: true, label: 'Descanso' };
+        if (s.holiday) return { holiday: true, name: s.name, label: 'Festivo' };
+        const e = s.find(x => x.person === personId);
+        return e ? { label: e.range, code: e.code } : { off: true, label: 'Descanso' };
+    }
+    const sched = (window.STAFF_SCHEDULE || {})[personId];
+    if (!sched || !sched[key]) return null;
+    const day = sched[key];
+    if (day.c === 'off') return { off: true, label: day.t };
+    return { label: day.t, special: day.c === 'special', split: day.c === 'split' };
 }
 
 let currentRole = null;
@@ -797,54 +845,37 @@ function renderSchedule(report) {
             `;
         }).join('');
 
-        // Shifts HTML — siempre muestro los 3 (Apertura/Intermedio/Cierre) para que cada persona vea
-        // quiénes preceden o suceden a su turno. El del usuario actual se resalta.
-        // Solo el Admin puede modificar turnos; el resto ve en solo-lectura.
-        const lockEdit = currentRole !== 'ADMIN';
-        // El esquema de Gestores NO se muestra a los Analistas (grupo independiente).
-        const allShifts = isAnalystRole() ? [] : (day.shifts || []);
+        // Equipo · turnos del día (horarios reales). Visibilidad por rol:
+        //   Admin / Edwin (Líder) → todo el equipo · Gestores → solo gestores · Analistas → nada (ven su tarjeta personal).
+        const dDate = parseSpanishDate(day.date);
+        const isAdmin = currentRole === 'ADMIN';
+        let teamIds = [];
+        if (isAdmin || (getRole(currentRole) || {}).isLeader) teamIds = STAFF_LIST.map(p => p.id);
+        else if (ROTATION_PEOPLE.includes(currentRole)) teamIds = ['LAURA', 'DANY', 'PANCHA'];
 
-        let shiftsHtml = allShifts.length > 0 ? `
+        let shiftsHtml = teamIds.length ? `
             <div class="shifts-container">
-                <div class="shifts-title"><i data-lucide="users"></i> Esquema Operativo (Turnos - Formato 24h - Rotación)${lockEdit ? ' · <em style="font-style:normal;font-size:0.85rem;color:var(--text-muted)">vista solo-lectura</em>' : ''}</div>
-                <div class="shifts-list">
-                    ${allShifts.map(s => {
-            let sClass = 'shift-medium';
-            if (s.importance === 'BAJO') sClass = 'shift-bajo';
-            if (s.importance === 'CRÍTICO') sClass = 'shift-critical';
-            if (s.importance === 'ALTO') sClass = 'shift-high';
-            const isMine = personFilter !== 'all' && s.person === personFilter;
-            if (isMine) sClass += ' shift-mine';
-
-            const dis = lockEdit ? 'disabled' : '';
-            let persons = ['DANY', 'PANCHA', 'LAURA'];
-            let selectHtml = `<select class="shift-person-select" ${dis} onchange="window.updateShiftAssignment('${day.date}', ${s.id}, 'person', this.value)">`;
-            persons.forEach(p => {
-                let selected = s.person === p ? 'selected' : '';
-                selectHtml += `<option value="${p}" ${selected}>${p}</option>`;
-            });
-            selectHtml += `</select>`;
-
-            const avatarUrl = PERSON_AVATARS[s.person] || '';
-            const personHtml = `
-                <div class="shift-person">
-                    <img class="person-avatar" src="${avatarUrl}" alt="${s.person}" onerror="this.style.display='none'">
-                    ${selectHtml}
-                </div>`;
-
+                <div class="shifts-title"><i data-lucide="users"></i> Equipo · turnos del día${isAdmin ? ' · <em style="font-style:normal;font-size:0.85rem;color:var(--accent-blue)">editable</em>' : ' · <em style="font-style:normal;font-size:0.85rem;color:var(--text-muted)">solo lectura</em>'}</div>
+                <div class="team-day-list">
+                    ${teamIds.map(pid => {
+            const p = STAFF_BY_ID[pid];
+            const s = getPersonSchedule(pid, dDate);
+            const key = dDate ? ymd(dDate) : '';
+            const mine = pid === currentRole;
+            let chipCls = 'tds-work', text = s ? s.label : '—';
+            if (!s) chipCls = 'tds-none';
+            else if (s.holiday) { chipCls = 'tds-holiday'; text = 'Festivo · ' + (s.name || ''); }
+            else if (s.off) { chipCls = 'tds-off'; }
+            else if (s.special) { chipCls = 'tds-special'; }
+            const editVal = (s ? (s.holiday ? text : s.label) : '').replace(/"/g, '&quot;');
+            const control = isAdmin
+                ? `<input type="text" class="tds-input" value="${editVal}" placeholder="—" onchange="window.updatePersonSchedule('${pid}','${key}', this.value)">`
+                : `<span class="tds-chip ${chipCls}">${text}</span>`;
             return `
-                            <div class="shift-card ${sClass}">
-                                <strong>${s.label}${isMine ? ' <span class="shift-mine-tag">TU TURNO</span>' : ''}</strong>
-                                <div class="shift-controls">
-                                    <div class="shift-time-edit">
-                                        <input type="text" class="shift-time-input" value="${s.curStart}" maxlength="5" placeholder="HH:MM" pattern="[0-2][0-9]:[0-5][0-9]" oninput="window.formatTimeInput(this)" onchange="window.updateShiftAssignment('${day.date}', ${s.id}, 'start', this.value)" ${dis}>
-                                        <span>a</span>
-                                        <input type="text" class="shift-time-input" value="${s.curEnd}" maxlength="5" placeholder="HH:MM" pattern="[0-2][0-9]:[0-5][0-9]" oninput="window.formatTimeInput(this)" onchange="window.updateShiftAssignment('${day.date}', ${s.id}, 'end', this.value)" ${dis}>
-                                    </div>
-                                    ${personHtml}
-                                </div>
-                            </div>
-                        `;
+                            <div class="team-day-row${mine ? ' tds-mine' : ''}">
+                                <span class="tds-person"><img src="${p.photo}" alt="" onerror="this.style.display='none'"><span class="tds-pname">${p.name}<small>${p.role}</small></span></span>
+                                ${control}
+                            </div>`;
         }).join('')}
                 </div>
             </div>
@@ -1571,114 +1602,74 @@ function renderAnalystComparison(r, fullReport) {
     lucide.createIcons();
 }
 
+function dateInView(d) {
+    if (!d) return false;
+    if (currentView === 'all') return true;
+    if (currentView === 'day') return isSameDay(d, anchorDate);
+    if (currentView === 'week') { const s = startOfWeek(anchorDate), e = endOfWeek(anchorDate); return d >= s && d <= e; }
+    if (currentView === 'month') return d.getMonth() === anchorDate.getMonth() && d.getFullYear() === anchorDate.getFullYear();
+    return true;
+}
+
+// Calendario propio de una persona (gestores, Pablo, Duque, Edwin)
+function renderOwnSchedule(r) {
+    const avatarEl = document.getElementById('personalAvatar');
+    if (avatarEl) { avatarEl.style.display = ''; avatarEl.src = r.avatar; }
+    document.getElementById('personalName').textContent = `Hola, ${r.name}`;
+
+    const sched = (window.STAFF_SCHEDULE || {})[r.id] || {};
+    const items = Object.keys(sched).map(k => fromYmd(k)).filter(dateInView).sort((a, b) => a - b)
+        .map(d => ({ d, s: getPersonSchedule(r.id, d) }));
+
+    const work = items.filter(x => x.s && !x.s.off && !x.s.holiday);
+    const rest = items.filter(x => x.s && (x.s.off || x.s.holiday));
+
+    document.getElementById('personalStats').innerHTML = `
+        <div class="ps-stat"><span class="ps-stat-num">${work.length}</span><span class="ps-stat-lbl">turnos</span></div>
+        <div class="ps-stat"><span class="ps-stat-num">${rest.length}</span><span class="ps-stat-lbl">descansos</span></div>
+    `;
+
+    const breakdownEl = document.getElementById('personalBreakdown');
+    if (items.length === 0) {
+        breakdownEl.innerHTML = `
+            <div class="pb-empty"><i data-lucide="coffee"></i>
+            <div><strong>Sin días en esta vista.</strong><br>Cambia a Semana, Mes o Todo para ver más.</div></div>`;
+        lucide.createIcons();
+        return;
+    }
+
+    const rows = items.map(({ d, s }) => {
+        let val;
+        if (!s) val = `<span style="color:#9CA3AF;">—</span>`;
+        else if (s.holiday) val = `<span class="tds-chip tds-holiday">Festivo · ${s.name || ''}</span>`;
+        else if (s.off) val = `<span class="tds-chip tds-off">Descanso</span>`;
+        else val = `<span class="tds-chip tds-work">${s.label}</span>`;
+        const lbl = `${WEEKDAY_LONG[d.getDay()].slice(0, 3)} ${d.getDate()} ${MONTH_SHORT[d.getMonth()]}`;
+        return `<tr><td class="cmp-day">${lbl}</td><td style="text-align:right;">${val}</td></tr>`;
+    }).join('');
+
+    breakdownEl.innerHTML = `<div class="analyst-compare-wrap"><table class="analyst-compare">
+        <tr><th class="cmp-day-head">Día</th><th>Horario</th></tr>${rows}</table></div>`;
+    lucide.createIcons();
+}
+
 function renderPersonalSection(fullReport) {
     const card = document.getElementById('personalCard');
     if (!card) return;
     const r = getRole(currentRole);
-    if (!r || !r.isOperator) {
+    if (!r || (!r.isOperator && !r.isLeader)) {
         card.hidden = true;
         return;
     }
     card.hidden = false;
 
-    // Integrantes nuevos sin horario definido todavía
-    if (r.pending) {
-        const avatarEl = document.getElementById('personalAvatar');
-        if (avatarEl) { avatarEl.style.display = ''; avatarEl.src = r.avatar; }
-        document.getElementById('personalName').textContent = `Hola, ${r.name}`;
-        document.getElementById('personalStats').innerHTML = '';
-        document.getElementById('personalBreakdown').innerHTML = `
-            <div class="pb-empty">
-                <i data-lucide="hourglass"></i>
-                <div><strong>Horario aún no configurado.</strong><br>
-                Tu calendario (${r.type}) se habilitará en cuanto Coordinación cargue los turnos.</div>
-            </div>`;
-        lucide.createIcons();
-        return;
-    }
-
-    if (r.isAnalyst) {
+    // Christian / Cristhian → comparativa de pareja (lógica ya definida)
+    if (r.id === 'CHRISTIAN' || r.id === 'CRISTHIAN') {
         renderAnalystComparison(r, fullReport);
         return;
     }
-
-    const avatarEl = document.getElementById('personalAvatar');
-    if (avatarEl) avatarEl.style.display = '';
-    document.getElementById('personalAvatar').src = r.avatar;
-    document.getElementById('personalName').textContent = `Hola, ${r.name}`;
-
-    // Restringe el report por la vista actual (Día/Semana/Mes/Todo)
-    const viewReport = applyViewFilter(fullReport);
-
-    // Agrupa por turno (Apertura/Intermedio/Cierre) los días donde aparece la persona
-    const buckets = { 1: [], 2: [], 3: [] };
-    viewReport.forEach(day => {
-        (day.shifts || []).forEach(s => {
-            if (s.person === r.id) buckets[s.id].push({ day, shift: s });
-        });
-    });
-
-    const labelMap = {
-        1: { title: 'Apertura', icon: 'sunrise', cls: 'pb-apertura' },
-        2: { title: 'Intermedio', icon: 'sun', cls: 'pb-intermedio' },
-        3: { title: 'Cierre', icon: 'moon', cls: 'pb-cierre' }
-    };
-
-    const totalDays = buckets[1].length + buckets[2].length + buckets[3].length;
-
-    document.getElementById('personalStats').innerHTML = `
-        <div class="ps-stat"><span class="ps-stat-num">${totalDays}</span><span class="ps-stat-lbl">turnos</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${buckets[1].length}</span><span class="ps-stat-lbl">aperturas</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${buckets[2].length}</span><span class="ps-stat-lbl">intermedios</span></div>
-        <div class="ps-stat"><span class="ps-stat-num">${buckets[3].length}</span><span class="ps-stat-lbl">cierres</span></div>
-    `;
-
-    const breakdownEl = document.getElementById('personalBreakdown');
-    if (totalDays === 0) {
-        breakdownEl.innerHTML = `
-            <div class="pb-empty">
-                <i data-lucide="coffee"></i>
-                <div><strong>Sin turnos asignados en esta vista.</strong><br>
-                Cambia a Semana, Mes o Todo para ver más.</div>
-            </div>`;
-        lucide.createIcons();
-        return;
-    }
-
-    const formatDay = (dateStr) => {
-        const d = parseSpanishDate(dateStr);
-        if (!d) return dateStr;
-        return `${WEEKDAY_LONG[d.getDay()].slice(0,3)} ${d.getDate()} ${MONTH_SHORT[d.getMonth()]}`;
-    };
-
-    breakdownEl.innerHTML = [1, 2, 3].map(id => {
-        const meta = labelMap[id];
-        const items = buckets[id];
-        const list = items.length > 0 ? items.map(({ day, shift }) => {
-            const impClass = day.importance === 'CRÍTICO' ? 'crit' : day.importance === 'ALTO' ? 'high' : 'med';
-            const closing = (day.closing || '').replace(/<[^>]*>?/gm, '');
-            return `
-                <li class="pb-item">
-                    <span class="pb-date">${formatDay(day.date)}</span>
-                    <span class="pb-range">${shift.curStart} – ${shift.curEnd}</span>
-                    <span class="pb-imp pb-imp-${impClass}">${day.importance}</span>
-                    <span class="pb-close">Cierre op.: ${closing}</span>
-                </li>`;
-        }).join('') : '<li class="pb-item pb-item-empty">— sin asignaciones —</li>';
-
-        return `
-            <div class="pb-bucket ${meta.cls}">
-                <div class="pb-bucket-header">
-                    <i data-lucide="${meta.icon}"></i>
-                    <strong>${meta.title}</strong>
-                    <span class="pb-bucket-count">${items.length}</span>
-                </div>
-                <ul class="pb-list">${list}</ul>
-            </div>
-        `;
-    }).join('');
-
-    lucide.createIcons();
+    // Gestores, Pablo, Duque y Edwin → su propio calendario
+    renderOwnSchedule(r);
 }
 
 // Person filter listener
