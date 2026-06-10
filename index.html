@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificación Días Pico & Jornadas - Virtualsoft</title>
+  <link rel="icon" type="image/png"
+    href="https://drive.google.com/thumbnail?id=18EgO23WKDbGFuHMitXtasu3cKWZ3MCpv&sz=w64">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+  <!-- Login / Role Selector -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-modal">
+      <div class="login-header">
+        <img src="https://drive.google.com/thumbnail?id=18EgO23WKDbGFuHMitXtasu3cKWZ3MCpv&sz=w64"
+          alt="Virtualsoft" class="login-brand">
+        <h2 class="login-title">¿Quién está usando el sistema?</h2>
+        <p class="login-subtitle">Selecciona tu perfil para continuar</p>
+      </div>
+      <div class="login-grid" id="loginGrid">
+        <!-- Generated via JS -->
+      </div>
+      <div class="login-password" id="loginPassword" hidden>
+        <button class="login-back" id="loginBack" type="button">
+          <i data-lucide="arrow-left"></i> Volver
+        </button>
+        <div class="login-password-icon"><i data-lucide="lock"></i></div>
+        <h3 class="login-password-title">Acceso de Administrador</h3>
+        <p class="login-password-sub">Ingresa la contraseña para habilitar edición</p>
+        <form id="loginPasswordForm" class="login-password-form" autocomplete="off">
+          <input type="password" id="loginPasswordInput" placeholder="Contraseña" autocomplete="off">
+          <button class="btn btn-primary" type="submit">Ingresar</button>
+        </form>
+        <div class="login-password-error" id="loginPasswordError" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar / Navigation -->
+    <aside class="sidebar collapsed" id="sidebar">
+      <button class="sidebar-brand" id="sidebarBrand" aria-label="Expandir / contraer menú">
+        <img src="https://drive.google.com/thumbnail?id=18EgO23WKDbGFuHMitXtasu3cKWZ3MCpv&sz=w64"
+          alt="Virtualsoft" class="brand-mini">
+        <img src="https://virtualsoftlatam.com/wp-content/uploads/2025/06/Group-1.png" alt="Virtualsoft Logo"
+          class="brand-full">
+      </button>
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active">
+          <i data-lucide="calendar-check"></i>
+          <span>Días Pico 2026</span>
+        </a>
+        <a href="#" class="nav-item" id="downloadNavBtn">
+          <i data-lucide="download"></i>
+          <span>Descargar Excel</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="tag-status online"></div>
+        <span class="sidebar-footer-text">Sistema en Línea</span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <div>
+          <h1 class="page-title">MUNDIAL 2026: CLASIFICACIÓN Y HORARIOS</h1>
+          <p class="page-subtitle">Sistema inteligente de asignación de días pico y horarios de cierre de operación.</p>
+        </div>
+        <div class="header-actions">
+          <button class="role-pill" id="rolePill" type="button" aria-label="Cambiar usuario">
+            <span class="role-pill-avatar" id="rolePillAvatar"></span>
+            <span class="role-pill-meta">
+              <span class="role-pill-name" id="rolePillName">—</span>
+              <span class="role-pill-type" id="rolePillType">Sin sesión</span>
+            </span>
+            <i data-lucide="log-out" class="role-pill-icon"></i>
+          </button>
+          <button id="downloadBtn" class="btn btn-primary">
+            <i data-lucide="file-spreadsheet"></i> Descargar Excel
+          </button>
+        </div>
+      </header>
+
+      <!-- Personal section (visible solo para roles de operación) -->
+      <section class="personal-card" id="personalCard" hidden>
+        <div class="personal-header">
+          <img class="personal-avatar" id="personalAvatar" alt="">
+          <div class="personal-info">
+            <h2 class="personal-name" id="personalName">—</h2>
+            <p class="personal-tagline">Tu calendario asignado · cambia la vista para filtrar</p>
+          </div>
+          <div class="personal-stats" id="personalStats"></div>
+        </div>
+        <div class="personal-controls">
+          <div class="personal-view-toggle view-toggle">
+            <button class="view-btn active" data-view="day"><i data-lucide="calendar"></i> Día</button>
+            <button class="view-btn" data-view="week"><i data-lucide="calendar-range"></i> Semana</button>
+            <button class="view-btn" data-view="month"><i data-lucide="calendar-days"></i> Mes</button>
+            <button class="view-btn" data-view="all"><i data-lucide="list"></i> Todo</button>
+          </div>
+          <div class="personal-date-nav date-nav">
+            <button class="nav-arrow" id="personalPrevDate" aria-label="Anterior"><i data-lucide="chevron-left"></i></button>
+            <span class="date-label" id="personalDateLabel">—</span>
+            <button class="nav-arrow" id="personalNextDate" aria-label="Siguiente"><i data-lucide="chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="personal-breakdown" id="personalBreakdown"></div>
+      </section>
+
+      <!-- Dashboard Stats -->
+      <section class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon" style="color: var(--accent-blue)"><i data-lucide="calendar-days"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-total-days">0</span>
+            <span class="stat-label">Días de Operación</span>
+          </div>
+        </div>
+        <div class="stat-card peak-stat">
+          <div class="stat-icon" style="color: var(--status-high)"><i data-lucide="zap"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-peak-days">0</span>
+            <span class="stat-label">Días Pico Detectados</span>
+          </div>
+        </div>
+        <div class="stat-card ecuador-stat">
+          <div class="stat-icon" style="color: #FFD100"><i data-lucide="flag"></i></div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-ec-matches">0</span>
+            <span class="stat-label">Partidos de Ecuador</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Calendar Controls (view + date navigation) -->
+      <div class="calendar-controls">
+        <div class="view-toggle" id="viewToggle">
+          <button class="view-btn active" data-view="day"><i data-lucide="calendar"></i> Día</button>
+          <button class="view-btn" data-view="week"><i data-lucide="calendar-range"></i> Semana</button>
+          <button class="view-btn" data-view="month"><i data-lucide="calendar-days"></i> Mes</button>
+          <button class="view-btn" data-view="all"><i data-lucide="list"></i> Todo</button>
+        </div>
+        <div class="date-nav">
+          <button class="nav-arrow" id="prevDate" aria-label="Anterior"><i data-lucide="chevron-left"></i></button>
+          <label class="date-display">
+            <span class="date-label" id="currentDateLabel">—</span>
+            <input type="date" id="datePicker" class="date-input">
+          </label>
+          <button class="nav-arrow" id="nextDate" aria-label="Siguiente"><i data-lucide="chevron-right"></i></button>
+          <button class="btn btn-secondary btn-sm" id="firstMatchBtn"><i data-lucide="rewind"></i> Inicio</button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" id="searchInput" placeholder="Buscar equipo o fecha...">
+        </div>
+        <div class="filter-options">
+          <select id="personFilter" class="modern-select">
+            <option value="all">Todas las personas</option>
+            <option value="DANY">DANY</option>
+            <option value="PANCHA">PANCHA</option>
+            <option value="LAURA">LAURA</option>
+          </select>
+          <select id="importanceFilter" class="modern-select">
+            <option value="all">Todos los Niveles</option>
+            <option value="CRÍTICO">Nivel Crítico (Ecuador)</option>
+            <option value="ALTO">Nivel Alto (Top Equipos)</option>
+            <option value="MEDIO">Nivel Medio</option>
+            <option value="BAJO">Nivel Bajo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Calendar Display Area -->
+      <section class="schedule-container" id="scheduleContainer">
+        <!-- Dynamic Content injected via JS -->
+      </section>
+    </main>
+  </div>
+
+  <!-- ExcelJS & App Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!--
+  PREVIEW (NO es plantilla EmailJS) — muestra cómo se ven los correos ya rellenados.
+  Sirve para validar diseño y como referencia del formato HTML de los bloques dinámicos
+  ( {{{shift_block}}}, {{{matches_block}}}, {{{week_schedule_block}}}, {{{week_matches_block}}} )
+  que la app generará. Abre este archivo en el navegador.
+-->
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview correos · Mundial 2026</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap');
+    body { margin: 0; background: #E5E9F0; font-family: 'Roboto', Arial, sans-serif; }
+    .preview-label { text-align: center; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; color: #16697A; padding: 24px 0 4px; font-size: 22px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════════ CORREO DIARIO ════════════════ -->
+  <div class="preview-label">▼ CORREO DIARIO</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding:16px 12px 32px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+          style="width:600px; max-width:600px; background:#FFFFFF; border-radius:16px; overflow:hidden; box-shadow:0 12px 28px rgba(17,24,39,0.10);">
+          <tr>
+            <td style="background-image:linear-gradient(135deg,#16697A 0%,#489FB5 100%); padding:30px 24px; text-align:center;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:4px; color:#BFE3EB;">🏆 COPA MUNDIAL</div>
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:42px; line-height:1; letter-spacing:2px; color:#FFFFFF; margin-top:4px;">MUNDIAL 2026</div>
+              <div style="font-size:13px; color:#E8F3F5; margin-top:8px;">Recordatorio diario de turnos</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px 28px 8px; text-align:center;">
+              <img src="https://turnos-wc26.web.app/personal/christian.png" width="88" height="88" alt=""
+                style="width:88px; height:88px; border-radius:50%; object-fit:cover; border:3px solid #489FB5;">
+              <h1 style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px; color:#1F2937; margin:14px 0 4px;">¡Hola, Christian E!</h1>
+              <span style="display:inline-block; background:#E8F3F5; color:#16697A; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px;">Analista</span>
+              <p style="font-size:14px; color:#6B7280; margin:12px 0 0;">Jueves, 11 de junio 2026</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 28px 4px;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">⏰ TU TURNO DE HOY</div>
+
+              <!-- ███ FORMATO shift_block (turno normal) ███ -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#F2F8F9; border:1px solid #D7E9ED; border-left:4px solid #16697A; border-radius:10px; padding:16px 18px;">
+                    <div style="font-size:13px; color:#6B7280; letter-spacing:0.5px;">Horario asignado</div>
+                    <div style="font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:1px; color:#16697A; line-height:1.1; margin:2px 0;">10:00 — 19:00</div>
+                    <span style="display:inline-block; background:#16697A; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Turno 10-7</span>
+                  </td>
+                </tr>
+              </table>
+              <!-- ███ /shift_block ███ -->
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 28px 8px;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">⚽ PARTIDOS DE HOY · 2 partidos</div>
+
+              <!-- ███ FORMATO matches_block ███ -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+                <tr>
+                  <td style="background:#FFFFFF; border:1px solid #E4E7EB; border-radius:10px; padding:12px 14px;">
+                    <table role="presentation" width="100%"><tr>
+                      <td style="font-family:'Bebas Neue',sans-serif; font-size:20px; color:#16697A; width:64px;">14:00</td>
+                      <td style="text-align:right;">
+                        <img src="https://r2.thesportsdb.com/images/media/team/badge/3rmosi1748525208.png" width="22" height="22" style="vertical-align:middle;">
+                        <span style="font-size:14px; font-weight:500; color:#1F2937;"> México</span>
+                        <span style="color:#9CA3AF; font-size:12px;"> vs </span>
+                        <span style="font-size:14px; font-weight:500; color:#1F2937;">Sudáfrica </span>
+                        <img src="https://r2.thesportsdb.com/images/media/team/badge/xjz9j91553368824.png" width="22" height="22" style="vertical-align:middle;">
+                      </td>
+                    </tr></table>
+                    <div style="font-size:11px; color:#9CA3AF; margin-top:6px;">Grupo A · Estadio Ciudad de México</div>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#FFFFFF; border:1px solid #E4E7EB; border-radius:10px; padding:12px 14px;">
+                    <table role="presentation" width="100%"><tr>
+                      <td style="font-family:'Bebas Neue',sans-serif; font-size:20px; color:#16697A; width:64px;">21:00</td>
+                      <td style="text-align:right;">
+                        <span style="font-size:14px; font-weight:500; color:#1F2937;">Rep. de Corea</span>
+                        <span style="color:#9CA3AF; font-size:12px;"> vs </span>
+                        <span style="font-size:14px; font-weight:500; color:#1F2937;">Rep. Checa</span>
+                      </td>
+                    </tr></table>
+                    <div style="font-size:11px; color:#9CA3AF; margin-top:6px;">Grupo A · Estadio Guadalajara</div>
+                  </td>
+                </tr>
+              </table>
+              <!-- ███ /matches_block ███ -->
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px 28px 28px; text-align:center; border-top:1px solid #E4E7EB;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; color:#16697A;">VIRTUALSOFT</div>
+              <p style="font-size:11px; color:#9CA3AF; margin:6px 0 0;">Sistema inteligente de turnos · Mundial 2026</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ════════════════ CORREO SEMANAL ════════════════ -->
+  <div class="preview-label">▼ CORREO SEMANAL (lunes 6am)</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding:16px 12px 40px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+          style="width:600px; max-width:600px; background:#FFFFFF; border-radius:16px; overflow:hidden; box-shadow:0 12px 28px rgba(17,24,39,0.10);">
+          <tr>
+            <td style="background-image:linear-gradient(135deg,#16697A 0%,#489FB5 100%); padding:30px 24px; text-align:center;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:4px; color:#BFE3EB;">🏆 COPA MUNDIAL</div>
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:42px; line-height:1; letter-spacing:2px; color:#FFFFFF; margin-top:4px;">MUNDIAL 2026</div>
+              <div style="font-size:13px; color:#E8F3F5; margin-top:8px;">Tu agenda de la semana</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px 28px 8px; text-align:center;">
+              <img src="https://turnos-wc26.web.app/personal/cristhian.png" width="88" height="88" alt=""
+                style="width:88px; height:88px; border-radius:50%; object-fit:cover; border:3px solid #489FB5;">
+              <h1 style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px; color:#1F2937; margin:14px 0 4px;">¡Hola, Cristhian B!</h1>
+              <span style="display:inline-block; background:#E8F3F5; color:#16697A; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px;">Analista</span>
+              <p style="font-size:14px; color:#6B7280; margin:12px 0 0;">Semana del <strong style="color:#1F2937;">15 – 21 Jun 2026</strong></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 28px 4px;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">🗓️ TUS TURNOS DE LA SEMANA</div>
+
+              <!-- ███ FORMATO week_schedule_block ███ -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E4E7EB; border-radius:10px; overflow:hidden;">
+                <tr style="background:#F1F3F6;">
+                  <td style="padding:9px 14px; font-size:12px; font-weight:700; color:#4B5563; letter-spacing:0.5px;">DÍA</td>
+                  <td style="padding:9px 14px; font-size:12px; font-weight:700; color:#4B5563; letter-spacing:0.5px; text-align:right;">HORARIO</td>
+                </tr>
+                <tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; color:#9CA3AF; font-size:14px;">Lun 15 Jun</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right; color:#D97706; font-weight:600; font-size:13px;">🌴 Festivo · Descanso</td></tr>
+                <tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">Mar 16 Jun</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right; font-family:'Bebas Neue',sans-serif; font-size:18px; color:#16697A;">10:00 — 19:00 <span style="font-size:11px; color:#6A4DD0;">(10-7)</span></td></tr>
+                <tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">Mié 17 Jun</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right; font-family:'Bebas Neue',sans-serif; font-size:18px; color:#16697A;">10:00 — 19:00 <span style="font-size:11px; color:#6A4DD0;">(10-7)</span></td></tr>
+                <tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">Jue 18 Jun</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right; font-family:'Bebas Neue',sans-serif; font-size:18px; color:#16697A;">08:00 — 17:00 <span style="font-size:11px; color:#16697A;">(8-5)</span></td></tr>
+                <tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">Vie 19 Jun</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right; font-family:'Bebas Neue',sans-serif; font-size:18px; color:#16697A;">10:00 — 19:00 <span style="font-size:11px; color:#6A4DD0;">(10-7)</span></td></tr>
+              </table>
+              <!-- ███ /week_schedule_block ███ -->
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px 28px 8px;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">⚽ PARTIDOS DE LA SEMANA · 19 partidos</div>
+              <!-- ███ FORMATO week_matches_block (agrupado por día) ███ -->
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:14px; color:#489FB5; letter-spacing:1px; margin:6px 0 6px;">LUN 15 JUN</div>
+              <div style="font-size:13px; color:#1F2937; padding:5px 0; border-bottom:1px solid #F1F3F6;"><strong style="color:#16697A;">11:00</strong> · España vs Cabo Verde <span style="color:#9CA3AF;">— Grupo H</span></div>
+              <div style="font-size:13px; color:#1F2937; padding:5px 0; border-bottom:1px solid #F1F3F6;"><strong style="color:#16697A;">14:00</strong> · Bélgica vs Egipto <span style="color:#9CA3AF;">— Grupo G</span></div>
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:14px; color:#489FB5; letter-spacing:1px; margin:14px 0 6px;">MAR 16 JUN</div>
+              <div style="font-size:13px; color:#1F2937; padding:5px 0; border-bottom:1px solid #F1F3F6;"><strong style="color:#16697A;">14:00</strong> · Francia vs Senegal <span style="color:#9CA3AF;">— Grupo I</span></div>
+              <!-- ███ /week_matches_block ███ -->
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px 28px 28px; text-align:center; border-top:1px solid #E4E7EB;">
+              <div style="font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; color:#16697A;">VIRTUALSOFT</div>
+              <p style="font-size:11px; color:#9CA3AF; margin:6px 0 0;">Resumen semanal automático · cada lunes a las 06:00</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+
+</html>

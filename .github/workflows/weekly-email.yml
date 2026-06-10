@@ -1,0 +1,30 @@
+name: Resumen semanal (Mundial 2026)
+
+on:
+  schedule:
+    # 06:00 Colombia (UTC-5) = 11:00 UTC, cada lunes
+    - cron: '0 11 * * 1'
+  workflow_dispatch:
+    inputs:
+      send_date:
+        description: 'Fecha de prueba YYYY-MM-DD (opcional, debe caer en la semana objetivo)'
+        required: false
+      dry_run:
+        description: 'Poner 1 para NO enviar (solo log)'
+        required: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Enviar resumen semanal
+        env:
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          RECIPIENTS_JSON: ${{ secrets.RECIPIENTS_JSON }}
+          SEND_DATE: ${{ github.event.inputs.send_date }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: node mailer/send-emails.js weekly

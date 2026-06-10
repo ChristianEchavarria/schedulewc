@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  PLANTILLA EMAILJS · RESUMEN SEMANAL · MUNDIAL 2026               ║
+  ║  Envío: cada LUNES a las 06:00                                    ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  Variables simples  ( {{ }} ):                                     ║
+  ║    {{person_name}}        "Christian E"                            ║
+  ║    {{person_photo}}       URL ABSOLUTA de la foto                  ║
+  ║    {{role_label}}         "Gestor" | "Analista"                    ║
+  ║    {{week_range}}         "15 – 21 Jun 2026"                       ║
+  ║    {{week_matches_count}} Nº de partidos de la semana (texto)      ║
+  ║    {{to_email}}           Destinatario (campo de envío EmailJS)    ║
+  ║                                                                    ║
+  ║  Bloques HTML  ( {{{ }}} , triple llave = sin escapar ):           ║
+  ║    {{{week_schedule_block}}}  Tabla de turnos día a día            ║
+  ║    {{{week_matches_block}}}   Partidos de la semana agrupados      ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Tu semana · Mundial 2026</title>
+  <!--[if mso]><style>* { font-family: Arial, sans-serif !important; }</style><![endif]-->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap');
+    body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; }
+    img { border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+    table { border-collapse: collapse !important; }
+    @media only screen and (max-width: 620px) {
+      .wc-card { width: 100% !important; }
+      .wc-pad { padding-left: 18px !important; padding-right: 18px !important; }
+    }
+  </style>
+</head>
+
+<body style="margin:0; padding:0; background-color:#F4F6F9; font-family:'Roboto',Arial,sans-serif; color:#1F2937;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    Hola {{person_name}}, aquí tienes tus turnos y los partidos de la semana — {{week_range}}.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F4F6F9;">
+    <tr>
+      <td align="center" style="padding:28px 12px;">
+
+        <table role="presentation" class="wc-card" width="600" cellpadding="0" cellspacing="0"
+          style="width:600px; max-width:600px; background-color:#FFFFFF; border-radius:16px; overflow:hidden; box-shadow:0 12px 28px rgba(17,24,39,0.10);">
+
+          <!-- ░░ Banner Mundialista ░░ -->
+          <tr>
+            <td bgcolor="#16697A" style="background:#16697A; background-image:linear-gradient(135deg,#16697A 0%,#489FB5 100%); padding:30px 24px; text-align:center;">
+              <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:13px; letter-spacing:4px; color:#BFE3EB; text-transform:uppercase;">🏆 Copa Mundial</div>
+              <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:42px; line-height:1; letter-spacing:2px; color:#FFFFFF; margin-top:4px;">MUNDIAL 2026</div>
+              <div style="font-size:13px; color:#E8F3F5; margin-top:8px; letter-spacing:0.5px;">Tu agenda de la semana</div>
+            </td>
+          </tr>
+
+          <!-- ░░ Persona ░░ -->
+          <tr>
+            <td class="wc-pad" style="padding:26px 28px 8px; text-align:center;">
+              <img src="{{person_photo}}" width="88" height="88" alt="{{person_name}}"
+                style="width:88px; height:88px; border-radius:50%; object-fit:cover; border:3px solid #489FB5;">
+              <h1 style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#1F2937; margin:14px 0 4px;">¡Hola, {{person_name}}!</h1>
+              <span style="display:inline-block; background-color:#E8F3F5; color:#16697A; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 12px; border-radius:999px;">{{role_label}}</span>
+              <p style="font-size:14px; color:#6B7280; margin:12px 0 0;">Semana del <strong style="color:#1F2937;">{{week_range}}</strong></p>
+            </td>
+          </tr>
+
+          <!-- ░░ Turnos de la semana ░░ -->
+          <tr>
+            <td class="wc-pad" style="padding:20px 28px 4px;">
+              <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">
+                🗓️ TUS TURNOS DE LA SEMANA
+              </div>
+              {{{week_schedule_block}}}
+            </td>
+          </tr>
+
+          <!-- ░░ Partidos de la semana ░░ -->
+          <tr>
+            <td class="wc-pad" style="padding:22px 28px 8px;">
+              <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:17px; letter-spacing:1px; color:#16697A; border-left:4px solid #489FB5; padding-left:10px; margin-bottom:12px;">
+                ⚽ PARTIDOS DE LA SEMANA · {{week_matches_count}}
+              </div>
+              {{{week_matches_block}}}
+            </td>
+          </tr>
+
+          <!-- ░░ Footer ░░ -->
+          <tr>
+            <td style="padding:22px 28px 28px; text-align:center; border-top:1px solid #E4E7EB;">
+              <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:15px; letter-spacing:2px; color:#16697A;">VIRTUALSOFT</div>
+              <p style="font-size:11px; color:#9CA3AF; margin:6px 0 0; line-height:1.5;">
+                Sistema inteligente de turnos · Mundial 2026<br>
+                Resumen semanal automático · cada lunes a las 06:00. No respondas a este correo.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

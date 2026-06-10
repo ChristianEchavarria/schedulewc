@@ -1,0 +1,30 @@
+name: Recordatorio diario (Mundial 2026)
+
+on:
+  schedule:
+    # 06:00 Colombia (UTC-5) = 11:00 UTC, todos los días
+    - cron: '0 11 * * *'
+  workflow_dispatch:        # permite ejecutarlo manualmente para probar
+    inputs:
+      send_date:
+        description: 'Fecha de prueba YYYY-MM-DD (opcional)'
+        required: false
+      dry_run:
+        description: 'Poner 1 para NO enviar (solo log)'
+        required: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Enviar recordatorio diario
+        env:
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          RECIPIENTS_JSON: ${{ secrets.RECIPIENTS_JSON }}
+          SEND_DATE: ${{ github.event.inputs.send_date }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: node mailer/send-emails.js daily
