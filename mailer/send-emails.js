@@ -35,6 +35,7 @@ const EMAILJS = {
 };
 
 const PHOTO_BASE = 'https://turnos-wc26.web.app/personal/';
+const ICON_BASE = 'https://turnos-wc26.web.app/email-icons/';
 
 // ── Personas ──
 const PEOPLE = {
@@ -174,7 +175,7 @@ function shiftBlock(personId, kind, dateObj, dateKey) {
         if (e.holiday) {
             return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
               <td style="background:#FEF7EC; border:1px solid #F6E0BE; border-left:4px solid #D97706; border-radius:10px; padding:16px 18px;">
-                <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#D97706; line-height:1.1; margin:2px 0;">🌴 DESCANSO</div>
+                <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#D97706; line-height:1.1; margin:2px 0;"><img src="${ICON_BASE}rest.svg" width="24" height="24" style="vertical-align:-4px; margin-right:6px;" alt=""> DESCANSO</div>
                 <span style="display:inline-block; background:#D97706; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Festivo · ${e.name}</span>
               </td></tr></table>`;
         }
@@ -224,7 +225,7 @@ function weekScheduleBlock(personId, kind, weekStart) {
             const e = analystEntryFor(personId, d);
             let val;
             if (!e) val = `<span style="color:#9CA3AF; font-size:13px;">—</span>`;
-            else if (e.holiday) val = `<span style="color:#D97706; font-weight:600; font-size:13px;">🌴 Festivo · Descanso</span>`;
+            else if (e.holiday) val = `<span style="color:#D97706; font-weight:600; font-size:13px;"><img src="${ICON_BASE}rest.svg" width="14" height="14" style="vertical-align:-2px; margin-right:3px;" alt="">Festivo · Descanso</span>`;
             else val = `<span style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:18px; color:#16697A;">${e.range}</span> <span style="font-size:11px; color:#6A4DD0;">(${e.code})</span>`;
             rows += `<tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">${shortDay(d)}</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right;">${val}</td></tr>`;
         }
