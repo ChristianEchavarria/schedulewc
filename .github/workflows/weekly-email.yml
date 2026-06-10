@@ -2,8 +2,8 @@ name: Resumen semanal (Mundial 2026)
 
 on:
   schedule:
-    # 06:00 Colombia (UTC-5) = 11:00 UTC, cada lunes
-    - cron: '0 11 * * 1'
+    # 12:00 Colombia (UTC-5) = 17:00 UTC, cada VIERNES — envía el horario de la semana SIGUIENTE
+    - cron: '0 17 * * 5'
   workflow_dispatch:
     inputs:
       send_date:

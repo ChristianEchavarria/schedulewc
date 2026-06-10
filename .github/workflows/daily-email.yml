@@ -2,8 +2,8 @@ name: Recordatorio diario (Mundial 2026)
 
 on:
   schedule:
-    # 06:00 Colombia (UTC-5) = 11:00 UTC, todos los días
-    - cron: '0 11 * * *'
+    # 12:00 Colombia (UTC-5) = 17:00 UTC, todos los días — envía el turno del DÍA SIGUIENTE
+    - cron: '0 17 * * *'
   workflow_dispatch:        # permite ejecutarlo manualmente para probar
     inputs:
       send_date:

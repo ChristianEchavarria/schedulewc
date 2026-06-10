@@ -43,7 +43,11 @@ const PEOPLE = {
     PANCHA: { name: 'PANCHA', role: 'Gestor', kind: 'gestor', photo: 'Pancha.jpg' },
     LAURA: { name: 'LAURA', role: 'Gestor', kind: 'gestor', photo: 'Laura.png' },
     CHRISTIAN: { name: 'Christian E', role: 'Analista', kind: 'analyst', photo: 'christian.png' },
-    CRISTHIAN: { name: 'Cristhian B', role: 'Analista', kind: 'analyst', photo: 'cristhian.png' }
+    CRISTHIAN: { name: 'Cristhian B', role: 'Analista', kind: 'analyst', photo: 'cristhian.png' },
+    // Nuevos — horarios pendientes; se omiten del envío hasta definirlos (pending: true)
+    PABLO: { name: 'Pablo', role: 'Analista', kind: 'analyst', photo: 'Pablo.jpg', pending: true },
+    DUQUE: { name: 'Duque', role: 'Analista', kind: 'analyst', photo: 'Duque.jpg', pending: true },
+    EDWIN: { name: 'Edwin', role: 'Líder', kind: 'leader', photo: 'Edwin.jpg', pending: true }
 };
 const ROTATION_PEOPLE = ['DANY', 'PANCHA', 'LAURA'];
 
@@ -304,8 +308,9 @@ const ONLY = (process.env.ONLY_PERSON || '').toUpperCase().split(',').map(s => s
 function skipByFilter(id) { return ONLY.length > 0 && !ONLY.includes(id); }
 
 async function runDaily() {
-    const d = today();
-    if (!inTournament(d)) { console.log(`Fuera del rango del Mundial (${ymd(d)}). No se envía.`); return; }
+    // Se envía HOY a las 12:00 Colombia el turno del DÍA SIGUIENTE.
+    const d = addDays(today(), 1);
+    if (!inTournament(d)) { console.log(`El día objetivo ${ymd(d)} está fuera del Mundial. No se envía.`); return; }
     const recipients = getRecipients();
     const dateKey = ymd(d);
     const info = dateObjByKey[dateKey];
@@ -314,6 +319,7 @@ async function runDaily() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
+        if (person.pending) continue; // horario aún no definido
         if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }
@@ -343,8 +349,9 @@ async function runDaily() {
 }
 
 async function runWeekly() {
+    // Se envía el VIERNES a las 12:00 Colombia el horario de la semana SIGUIENTE (Lun-Dom).
     const d = today();
-    const weekStart = startOfWeek(d);
+    const weekStart = addDays(startOfWeek(d), 7);
     const weekEnd = addDays(weekStart, 6);
     // Solo si la semana intersecta el Mundial
     if (weekEnd < TOURNAMENT_START || weekStart > TOURNAMENT_END) { console.log('Semana fuera del Mundial. No se envía.'); return; }
@@ -354,6 +361,7 @@ async function runWeekly() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
+        if (person.pending) continue; // horario aún no definido
         if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }

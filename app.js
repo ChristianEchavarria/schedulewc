@@ -271,6 +271,10 @@ const ROLES = [
     { id: 'LAURA', name: 'LAURA', type: 'Gestor', avatar: PERSON_AVATARS.LAURA, isOperator: true },
     { id: 'CHRISTIAN', name: 'Christian E', type: 'Analista', avatar: 'personal/christian.png', isOperator: true, isAnalyst: true },
     { id: 'CRISTHIAN', name: 'Cristhian B', type: 'Analista', avatar: 'personal/cristhian.png', isOperator: true, isAnalyst: true },
+    // Nuevos integrantes — horario pendiente de definir (pending: true)
+    { id: 'PABLO', name: 'Pablo', type: 'Analista', avatar: 'personal/Pablo.jpg', isOperator: true, isAnalyst: true, pending: true },
+    { id: 'DUQUE', name: 'Duque', type: 'Analista', avatar: 'personal/Duque.jpg', isOperator: true, isAnalyst: true, pending: true },
+    { id: 'EDWIN', name: 'Edwin', type: 'Líder', avatar: 'personal/Edwin.jpg', isOperator: false, isLeader: true, pending: true },
     { id: 'ADMIN', name: 'Administrador', type: 'Coordinación', avatar: null, isOperator: false }
 ];
 
@@ -350,8 +354,8 @@ Object.keys(rawAssignments).forEach(d => {
         }
     });
 });
-// Migración: limpiar referencias antiguas a DUQUE (removido del sistema)
-const _REMOVED_PEOPLE = ['DUQUE'];
+// (Duque volvió al sistema como Analista, por lo que ya no se remueve)
+const _REMOVED_PEOPLE = [];
 Object.keys(rawAssignments).forEach(d => {
     Object.keys(rawAssignments[d]).forEach(sId => {
         const entry = rawAssignments[d][sId];
@@ -795,7 +799,8 @@ function renderSchedule(report) {
 
         // Shifts HTML — siempre muestro los 3 (Apertura/Intermedio/Cierre) para que cada persona vea
         // quiénes preceden o suceden a su turno. El del usuario actual se resalta.
-        const lockEdit = isOperatorRole();
+        // Solo el Admin puede modificar turnos; el resto ve en solo-lectura.
+        const lockEdit = currentRole !== 'ADMIN';
         // El esquema de Gestores NO se muestra a los Analistas (grupo independiente).
         const allShifts = isAnalystRole() ? [] : (day.shifts || []);
 
@@ -1575,6 +1580,22 @@ function renderPersonalSection(fullReport) {
         return;
     }
     card.hidden = false;
+
+    // Integrantes nuevos sin horario definido todavía
+    if (r.pending) {
+        const avatarEl = document.getElementById('personalAvatar');
+        if (avatarEl) { avatarEl.style.display = ''; avatarEl.src = r.avatar; }
+        document.getElementById('personalName').textContent = `Hola, ${r.name}`;
+        document.getElementById('personalStats').innerHTML = '';
+        document.getElementById('personalBreakdown').innerHTML = `
+            <div class="pb-empty">
+                <i data-lucide="hourglass"></i>
+                <div><strong>Horario aún no configurado.</strong><br>
+                Tu calendario (${r.type}) se habilitará en cuanto Coordinación cargue los turnos.</div>
+            </div>`;
+        lucide.createIcons();
+        return;
+    }
 
     if (r.isAnalyst) {
         renderAnalystComparison(r, fullReport);
