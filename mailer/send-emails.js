@@ -22,8 +22,10 @@ const path = require('path');
 // ── Cargar partidos desde data.js (define window.WC_MATCHES / WC_BADGES / resolveTeamBadge) ──
 global.window = {};
 require(path.join(__dirname, '..', 'data.js'));
+require(path.join(__dirname, '..', 'schedule-data.js'));
 const MATCHES = global.window.WC_MATCHES || [];
 const resolveTeamBadge = global.window.resolveTeamBadge || (() => null);
+const STAFF_SCHEDULE = global.window.STAFF_SCHEDULE || {};
 
 // ── Config EmailJS (público; la clave privada va por env) ──
 const EMAILJS = {
@@ -44,10 +46,9 @@ const PEOPLE = {
     LAURA: { name: 'LAURA', role: 'Gestor', kind: 'gestor', photo: 'Laura.png' },
     CHRISTIAN: { name: 'Christian E', role: 'Analista', kind: 'analyst', photo: 'christian.png' },
     CRISTHIAN: { name: 'Cristhian B', role: 'Analista', kind: 'analyst', photo: 'cristhian.png' },
-    // Nuevos — horarios pendientes; se omiten del envío hasta definirlos (pending: true)
-    PABLO: { name: 'Pablo', role: 'Analista', kind: 'analyst', photo: 'Pablo.jpg', pending: true },
-    DUQUE: { name: 'Duque', role: 'Analista', kind: 'analyst', photo: 'Duque.jpg', pending: true },
-    EDWIN: { name: 'Edwin', role: 'Líder', kind: 'leader', photo: 'Edwin.jpg', pending: true }
+    PABLO: { name: 'Pablo', role: 'Analista', kind: 'staff', photo: 'Pablo.jpg' },
+    DUQUE: { name: 'Duque', role: 'Analista', kind: 'staff', photo: 'Duque.jpg' },
+    EDWIN: { name: 'Edwin', role: 'Líder', kind: 'staff', photo: 'Edwin.jpg' }
 };
 const ROTATION_PEOPLE = ['DANY', 'PANCHA', 'LAURA'];
 
@@ -140,63 +141,48 @@ function getAnalystShifts(dateObj) {
 }
 function analystEntryFor(personId, dateObj) {
     const s = getAnalystShifts(dateObj);
-    if (!s) return null;            // fin de semana
+    if (!s) return { off: true };               // fin de semana → descanso
     if (s.holiday) return { holiday: true, name: s.name };
-    return s.find(x => x.person === personId) || null;
+    const e = s.find(x => x.person === personId);
+    return e ? { label: e.range, code: e.code } : { off: true };
 }
 
-// ── Turnos de GESTORES (rotación automática por día, igual que la web) ──
-function fHour(h) { return String(((h % 24) + 24) % 24).padStart(2, '0') + ':00'; }
-function computeGestorShifts(dayMatches, dayIndex) {
-    const sorted = sortMatches(dayMatches);
-    let start1 = 6, end1 = 15, end3 = 15;
-    if (sorted.length) {
-        let last = sorted[sorted.length - 1];
-        let lh = parseInt(last.time.split(':')[0]); if (lh < 5) lh += 24;
-        end3 = Math.max(lh + 4, 15);
-    }
-    const start3 = end3 - 9;
-    const start2 = Math.floor((start1 + start3) / 2), end2 = start2 + 9;
-    const auto = [ROTATION_PEOPLE[dayIndex % 3], ROTATION_PEOPLE[(dayIndex + 1) % 3], ROTATION_PEOPLE[(dayIndex + 2) % 3]];
-    return [
-        { id: 1, label: 'Turno 1 · Apertura', range: `${fHour(start1)} — ${fHour(end1)}`, person: auto[0] },
-        { id: 2, label: 'Turno 2 · Intermedio', range: `${fHour(start2)} — ${fHour(end2)}`, person: auto[1] },
-        { id: 3, label: 'Turno 3 · Cierre', range: `${fHour(start3)} — ${fHour(end3)}`, person: auto[2] }
-    ];
-}
-function gestorEntryFor(personId, dateKey) {
-    const info = dateObjByKey[dateKey];
-    if (!info) return null;                       // sin partidos ese día → sin turno
-    const shifts = computeGestorShifts(matchesByDate[info.dateStr], info.dayIndex);
-    return shifts.find(s => s.person === personId) || null;
+// Horario unificado de cualquier persona en una fecha.
+// Christian/Cristhian → lógica definida (10-7/8-5 + festivos). El resto → STAFF_SCHEDULE.
+// Devuelve { label, code?, off?, holiday?, name?, special?, split? } o null si no hay dato.
+function scheduleFor(personId, dateObj) {
+    if (personId === 'CHRISTIAN' || personId === 'CRISTHIAN') return analystEntryFor(personId, dateObj);
+    const day = (STAFF_SCHEDULE[personId] || {})[ymd(dateObj)];
+    if (!day) return null;
+    if (day.c === 'off') return { off: true, label: day.t };
+    return { label: day.t, special: day.c === 'special', split: day.c === 'split' };
 }
 
 // ══════════════════ Generadores de HTML (estilo idéntico al preview) ══════════════════
-function shiftBlock(personId, kind, dateObj, dateKey) {
-    if (kind === 'analyst') {
-        const e = analystEntryFor(personId, dateObj);
-        if (!e) return `<div style="font-size:14px; color:#6B7280;">Hoy no tienes turno asignado (fin de semana).</div>`;
-        if (e.holiday) {
-            return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-              <td style="background:#FEF7EC; border:1px solid #F6E0BE; border-left:4px solid #D97706; border-radius:10px; padding:16px 18px;">
-                <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#D97706; line-height:1.1; margin:2px 0;"><img src="${ICON_BASE}rest.svg" width="24" height="24" style="vertical-align:-4px; margin-right:6px;" alt=""> DESCANSO</div>
-                <span style="display:inline-block; background:#D97706; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Festivo · ${e.name}</span>
-              </td></tr></table>`;
-        }
+function shiftBlock(personId, dateObj) {
+    const s = scheduleFor(personId, dateObj);
+    if (!s) return `<div style="font-size:14px; color:#6B7280;">Sin horario registrado para hoy.</div>`;
+    if (s.holiday) {
         return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          <td style="background:#F2F8F9; border:1px solid #D7E9ED; border-left:4px solid #16697A; border-radius:10px; padding:16px 18px;">
-            <div style="font-size:13px; color:#6B7280; letter-spacing:0.5px;">Horario asignado</div>
-            <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:34px; letter-spacing:1px; color:#16697A; line-height:1.1; margin:2px 0;">${e.range}</div>
-            <span style="display:inline-block; background:#16697A; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Turno ${e.code}</span>
+          <td style="background:#FEF7EC; border:1px solid #F6E0BE; border-left:4px solid #D97706; border-radius:10px; padding:16px 18px;">
+            <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#D97706; line-height:1.1; margin:2px 0;"><img src="${ICON_BASE}rest.svg" width="24" height="24" style="vertical-align:-4px; margin-right:6px;" alt=""> DESCANSO</div>
+            <span style="display:inline-block; background:#D97706; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Festivo · ${s.name}</span>
           </td></tr></table>`;
     }
-    // gestor
-    const e = gestorEntryFor(personId, dateKey);
-    if (!e) return `<div style="font-size:14px; color:#6B7280;">Hoy no hay operación asignada.</div>`;
+    if (s.off) {
+        return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="background:#EEF1F5; border:1px solid #DDE2E8; border-left:4px solid #6B7280; border-radius:10px; padding:16px 18px;">
+            <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:30px; letter-spacing:1px; color:#6B7280; line-height:1.1; margin:2px 0;"><img src="${ICON_BASE}rest.svg" width="24" height="24" style="vertical-align:-4px; margin-right:6px;" alt=""> DESCANSO</div>
+          </td></tr></table>`;
+    }
+    const big = s.label.length > 16 ? '20px' : '34px';
+    const badge = s.code ? `<span style="display:inline-block; background:#16697A; color:#fff; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Turno ${s.code}</span>`
+        : (s.special ? `<span style="display:inline-block; background:#EAB308; color:#3a2e00; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px;">Especial</span>` : '');
     return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="background:#F2F8F9; border:1px solid #D7E9ED; border-left:4px solid #16697A; border-radius:10px; padding:16px 18px;">
-        <div style="font-size:13px; color:#6B7280; letter-spacing:0.5px;">${e.label}</div>
-        <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:34px; letter-spacing:1px; color:#16697A; line-height:1.1; margin:2px 0;">${e.range}</div>
+        <div style="font-size:13px; color:#6B7280; letter-spacing:0.5px;">Horario asignado</div>
+        <div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:${big}; letter-spacing:1px; color:#16697A; line-height:1.1; margin:2px 0;">${s.label}</div>
+        ${badge}
       </td></tr></table>`;
 }
 
@@ -221,26 +207,17 @@ function matchesBlock(list) {
     return sortMatches(list).map(matchRowHtml).join('');
 }
 
-function weekScheduleBlock(personId, kind, weekStart) {
+function weekScheduleBlock(personId, weekStart) {
     let rows = '';
-    if (kind === 'analyst') {
-        for (let i = 0; i < 5; i++) { // Lun..Vie
-            const d = addDays(weekStart, i);
-            const e = analystEntryFor(personId, d);
-            let val;
-            if (!e) val = `<span style="color:#9CA3AF; font-size:13px;">—</span>`;
-            else if (e.holiday) val = `<span style="color:#D97706; font-weight:600; font-size:13px;"><img src="${ICON_BASE}rest.svg" width="14" height="14" style="vertical-align:-2px; margin-right:3px;" alt="">Festivo · Descanso</span>`;
-            else val = `<span style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:18px; color:#16697A;">${e.range}</span> <span style="font-size:11px; color:#6A4DD0;">(${e.code})</span>`;
-            rows += `<tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">${shortDay(d)}</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right;">${val}</td></tr>`;
-        }
-    } else {
-        for (let i = 0; i < 7; i++) {
-            const d = addDays(weekStart, i);
-            const key = ymd(d);
-            const e = gestorEntryFor(personId, key);
-            if (!e) continue; // sin operación ese día
-            rows += `<tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">${shortDay(d)} <span style="color:#9CA3AF; font-size:11px;">${e.label.replace('Turno ', 'T').split(' · ')[0]}</span></td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right;"><span style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:18px; color:#16697A;">${e.range}</span></td></tr>`;
-        }
+    for (let i = 0; i < 7; i++) { // Lun..Dom (incluye fines de semana)
+        const d = addDays(weekStart, i);
+        const s = scheduleFor(personId, d);
+        let val;
+        if (!s) val = `<span style="color:#9CA3AF; font-size:13px;">—</span>`;
+        else if (s.holiday) val = `<span style="color:#D97706; font-weight:600; font-size:13px;"><img src="${ICON_BASE}rest.svg" width="14" height="14" style="vertical-align:-2px; margin-right:3px;" alt="">Festivo · Descanso</span>`;
+        else if (s.off) val = `<span style="color:#6B7280; font-size:13px;"><img src="${ICON_BASE}rest.svg" width="14" height="14" style="vertical-align:-2px; margin-right:3px;" alt="">Descanso</span>`;
+        else val = `<span style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:16px; color:#16697A;">${s.label}</span>${s.code ? ` <span style="font-size:11px; color:#6A4DD0;">(${s.code})</span>` : ''}`;
+        rows += `<tr><td style="padding:11px 14px; border-top:1px solid #E4E7EB; font-size:14px; color:#1F2937;">${shortDay(d)}</td><td style="padding:11px 14px; border-top:1px solid #E4E7EB; text-align:right;">${val}</td></tr>`;
     }
     if (!rows) rows = `<tr><td colspan="2" style="padding:14px; text-align:center; color:#9CA3AF;">Sin turnos esta semana.</td></tr>`;
     return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E4E7EB; border-radius:10px; overflow:hidden;">
@@ -319,17 +296,13 @@ async function runDaily() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
-        if (person.pending) continue; // horario aún no definido
         if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }
 
-        // ¿Tiene jornada hoy?
-        if (person.kind === 'analyst') {
-            if (!getAnalystShifts(d)) continue; // fin de semana → no enviar
-        } else {
-            if (!info) continue; // gestor sin partidos hoy → sin operación
-        }
+        // Solo se envía el diario a quien TRABAJA mañana (se omite descanso/festivo/sin dato).
+        const s = scheduleFor(id, d);
+        if (!s || s.off || s.holiday) continue;
 
         const params = {
             to_email: to,
@@ -338,7 +311,7 @@ async function runDaily() {
             role_label: person.role,
             greeting_date: greeting,
             matches_count: `${dayMatches.length} ${dayMatches.length === 1 ? 'partido' : 'partidos'}`,
-            shift_block: shiftBlock(id, person.kind, d, dateKey),
+            shift_block: shiftBlock(id, d),
             matches_block: matchesBlock(dayMatches)
         };
         await sendEmail(EMAILJS.templateDaily, params);
@@ -361,7 +334,6 @@ async function runWeekly() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
-        if (person.pending) continue; // horario aún no definido
         if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }
@@ -372,7 +344,7 @@ async function runWeekly() {
             role_label: person.role,
             week_range: range,
             week_matches_count: `${wm.count} ${wm.count === 1 ? 'partido' : 'partidos'}`,
-            week_schedule_block: weekScheduleBlock(id, person.kind, weekStart),
+            week_schedule_block: weekScheduleBlock(id, weekStart),
             week_matches_block: wm.html
         };
         await sendEmail(EMAILJS.templateWeekly, params);
