@@ -298,6 +298,10 @@ function today() {
 }
 function inTournament(d) { return d >= TOURNAMENT_START && d <= TOURNAMENT_END; }
 
+// Filtro opcional: enviar solo a ciertas personas (ej. ONLY_PERSON="CHRISTIAN" o "DANY,LAURA")
+const ONLY = (process.env.ONLY_PERSON || '').toUpperCase().split(',').map(s => s.trim()).filter(Boolean);
+function skipByFilter(id) { return ONLY.length > 0 && !ONLY.includes(id); }
+
 async function runDaily() {
     const d = today();
     if (!inTournament(d)) { console.log(`Fuera del rango del Mundial (${ymd(d)}). No se envía.`); return; }
@@ -309,6 +313,7 @@ async function runDaily() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
+        if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }
 
@@ -348,6 +353,7 @@ async function runWeekly() {
 
     let sent = 0;
     for (const [id, person] of Object.entries(PEOPLE)) {
+        if (skipByFilter(id)) continue;
         const to = recipients[id];
         if (!to) { console.warn(`Sin correo para ${id}, se omite.`); continue; }
         const params = {

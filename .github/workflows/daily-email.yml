@@ -12,6 +12,9 @@ on:
       dry_run:
         description: 'Poner 1 para NO enviar (solo log)'
         required: false
+      only_person:
+        description: 'Enviar solo a estas personas (ej. CHRISTIAN o DANY,LAURA). Vacío = todos'
+        required: false
 
 jobs:
   send:
@@ -27,4 +30,5 @@ jobs:
           RECIPIENTS_JSON: ${{ secrets.RECIPIENTS_JSON }}
           SEND_DATE: ${{ github.event.inputs.send_date }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          ONLY_PERSON: ${{ github.event.inputs.only_person }}
         run: node mailer/send-emails.js daily
