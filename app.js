@@ -774,7 +774,11 @@ scheduleData.forEach(e => { e._date = parseSpanishDate(e.date); });
 const allParsedDates = scheduleData.map(e => e._date).filter(Boolean).sort((a, b) => a - b);
 const minDate = allParsedDates.length ? allParsedDates[0] : new Date(2026, 5, 11);
 const maxDate = allParsedDates.length ? allParsedDates[allParsedDates.length - 1] : new Date(2026, 6, 19);
-anchorDate = new Date(minDate);
+// Abrir en el DÍA ACTUAL real (acotado al rango del Mundial); si hoy está fuera, en el inicio.
+(function () {
+    const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    anchorDate = (hoy < minDate) ? new Date(minDate) : (hoy > maxDate ? new Date(maxDate) : hoy);
+})();
 
 function clampDate(d) {
     if (d < minDate) return new Date(minDate);
