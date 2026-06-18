@@ -27,6 +27,17 @@ const MATCHES = global.window.WC_MATCHES || [];
 const resolveTeamBadge = global.window.resolveTeamBadge || (() => null);
 const STAFF_SCHEDULE = global.window.STAFF_SCHEDULE || {};
 
+// Convierte 24h ("HH:MM") a 12h con AM/PM; deja igual lo que ya trae AM/PM.
+function to12h(str) {
+    if (str == null) return str;
+    return String(str).replace(/(\d{1,2}):(\d{2})/g, (full, h, m) => {
+        h = parseInt(h, 10);
+        const ap = h < 12 ? 'AM' : 'PM';
+        let h12 = h % 12; if (h12 === 0) h12 = 12;
+        return `${h12}:${m} ${ap}`;
+    });
+}
+
 // ── Config EmailJS (público; la clave privada va por env) ──
 const EMAILJS = {
     publicKey: 'yxW9hjR6OlVMHRPox',
@@ -152,8 +163,8 @@ function getAnalystShifts(dateObj) {
     const who107 = (patternA ? mapA : mapB)[dow];
     const who85 = who107 === 'CHRISTIAN' ? 'CRISTHIAN' : 'CHRISTIAN';
     return [
-        { person: who107, range: '10:00 — 19:00', code: '10-7' },
-        { person: who85, range: '08:00 — 17:00', code: '8-5' }
+        { person: who107, range: '10:00 AM - 7:00 PM', code: '10-7' },
+        { person: who85, range: '8:00 AM - 5:00 PM', code: '8-5' }
     ];
 }
 function analystEntryFor(personId, dateObj) {
@@ -215,7 +226,7 @@ function matchRowHtml(m) {
     return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;"><tr>
       <td style="background:#FFFFFF; border:1px solid #E4E7EB; border-radius:10px; padding:12px 14px;">
         <table role="presentation" width="100%"><tr>
-          <td style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:20px; color:#16697A; width:64px;">${m.time}</td>
+          <td style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:18px; color:#16697A; width:88px;">${to12h(m.time)}</td>
           <td style="text-align:right;">${imgA} <span style="font-size:14px; font-weight:500; color:#1F2937;">${m.team1}</span>
             <span style="color:#9CA3AF; font-size:12px;"> vs </span>
             <span style="font-size:14px; font-weight:500; color:#1F2937;">${m.team2}</span> ${imgB}</td>
@@ -253,7 +264,7 @@ function weekMatchesBlock(weekStart, weekEnd) {
         const list = sortMatches(matchesByDate[dateStr]);
         count += list.length;
         html += `<div style="font-family:'Bebas Neue','Arial Narrow',Arial,sans-serif; font-size:14px; color:#489FB5; letter-spacing:1px; margin:14px 0 6px;">${shortDay(d).toUpperCase()}</div>`;
-        html += list.map(m => `<div style="font-size:13px; color:#1F2937; padding:5px 0; border-bottom:1px solid #F1F3F6;"><strong style="color:#16697A;">${m.time}</strong> · ${m.team1} vs ${m.team2}${m.group ? ` <span style="color:#9CA3AF;">— ${m.group}</span>` : ''}</div>`).join('');
+        html += list.map(m => `<div style="font-size:13px; color:#1F2937; padding:5px 0; border-bottom:1px solid #F1F3F6;"><strong style="color:#16697A;">${to12h(m.time)}</strong> · ${m.team1} vs ${m.team2}${m.group ? ` <span style="color:#9CA3AF;">— ${m.group}</span>` : ''}</div>`).join('');
     });
     if (!count) html = `<div style="font-size:14px; color:#6B7280;">Sin partidos esta semana.</div>`;
     return { html, count };

@@ -1,6 +1,18 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
+// Convierte horas 24h ("HH:MM" o rangos "HH:MM - HH:MM") a 12h con AM/PM.
+// Si el texto ya trae AM/PM u otro formato, lo deja igual.
+function to12h(str) {
+    if (str == null) return str;
+    return String(str).replace(/(\d{1,2}):(\d{2})/g, (full, h, m) => {
+        h = parseInt(h, 10);
+        const ap = h < 12 ? 'AM' : 'PM';
+        let h12 = h % 12; if (h12 === 0) h12 = 12;
+        return `${h12}:${m} ${ap}`;
+    });
+}
+
 // Cronograma del Mundial (importado desde data.js → window.WC_MATCHES)
 // Las horas ya vienen ajustadas (formato 24h, hora final usada para turnos).
 let scheduleData = (window.WC_MATCHES || []).map(m => ({
@@ -324,8 +336,8 @@ function getAnalystShifts(dateObj) {
     const who85 = who107 === 'CHRISTIAN' ? 'CRISTHIAN' : 'CHRISTIAN';
 
     return [
-        { person: who107, range: '10:00 - 19:00', code: '10-7' },
-        { person: who85, range: '08:00 - 17:00', code: '8-5' }
+        { person: who107, range: '10:00 AM - 7:00 PM', code: '10-7' },
+        { person: who85, range: '8:00 AM - 5:00 PM', code: '8-5' }
     ];
 }
 
@@ -637,9 +649,9 @@ function calculateShiftsAndClosing(matches, date, dayIndex) {
 
     // We need to determine if it crosses midnight relative to standard times
     if (finalCloseH < 5) {
-        closingTimeStr = `${finalCloseHstr} h <small style="color:var(--gray-64)">[+1 día]</small>`;
+        closingTimeStr = `${to12h(finalCloseHstr)} <small style="color:var(--gray-64)">[+1 día]</small>`;
     } else {
-        closingTimeStr = `${finalCloseHstr} h`;
+        closingTimeStr = `${to12h(finalCloseHstr)}`;
     }
 
     return {
@@ -864,7 +876,7 @@ function renderSchedule(report) {
             return `
                 <div class="match-card ${mClass}">
                     <div class="match-top">
-                        <div class="match-time">${m.time}</div>
+                        <div class="match-time">${to12h(m.time)}</div>
                         ${groupTag}
                     </div>
                     <div class="match-teams">
@@ -1289,10 +1301,10 @@ async function exportToExcel() {
                     dayLevel: day.importance,
                     closing: closingClean,
                     shift: assignedShift ? assignedShift.label : 'N/A',
-                    shiftTime: assignedShift ? assignedShift.timeRange : 'N/A',
+                    shiftTime: assignedShift ? to12h(assignedShift.timeRange) : 'N/A',
                     shiftLevel: assignedShift ? assignedShift.importance : 'N/A',
                     person: assignedShift ? assignedShift.person : 'N/A',
-                    matchTime: match.time,
+                    matchTime: to12h(match.time),
                     match: `${match.team1} vs ${match.team2}`,
                     matchLevel: matchImp
                 });
