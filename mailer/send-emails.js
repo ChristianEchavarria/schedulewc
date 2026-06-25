@@ -162,10 +162,24 @@ function getAnalystShifts(dateObj) {
     const mapB = { 1: 'CHRISTIAN', 2: 'CRISTHIAN', 3: 'CRISTHIAN', 4: 'CHRISTIAN', 5: 'CRISTHIAN' };
     const who107 = (patternA ? mapA : mapB)[dow];
     const who85 = who107 === 'CHRISTIAN' ? 'CRISTHIAN' : 'CHRISTIAN';
-    return [
+    let entries = [
         { person: who107, range: '10:00 AM - 7:00 PM', code: '10-7' },
         { person: who85, range: '8:00 AM - 5:00 PM', code: '8-5' }
     ];
+    const key = ymd(dateObj);
+    // Desde el 30/06: ambos analistas 8:00 AM - 5:00 PM en sus días de trabajo.
+    if (key >= '2026-06-30') {
+        entries = [
+            { person: 'CHRISTIAN', range: '8:00 AM - 5:00 PM', code: null },
+            { person: 'CRISTHIAN', range: '8:00 AM - 5:00 PM', code: null }
+        ];
+    }
+    // 26/06: Christian 6:00 AM - 3:00 PM (Cristhian queda como está).
+    if (key === '2026-06-26') {
+        entries = entries.map(e => e.person === 'CHRISTIAN'
+            ? { person: 'CHRISTIAN', range: '6:00 AM - 3:00 PM', code: null } : e);
+    }
+    return entries;
 }
 function analystEntryFor(personId, dateObj) {
     const s = getAnalystShifts(dateObj);
