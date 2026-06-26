@@ -95,17 +95,17 @@ window.WC_MATCHES = [
   { date: "Sábado, 27 de junio 2026", time: "21:00", team1: "Jordania", team2: "Argentina", group: "Grupo J", stadium: "Estadio Dallas" },
 
   // ─────────── Dieciseisavos / Octavos / Cuartos / Semis / Final ───────────
-  { date: "Domingo, 28 de junio 2026", time: "15:00", team1: "2º Grupo A", team2: "2º Grupo B", group: "Partido 73", stadium: "Estadio Los Ángeles", isKnockout: true },
+  { date: "Domingo, 28 de junio 2026", time: "14:00", team1: "Sudáfrica", team2: "Canadá", group: "Partido 73", stadium: "Estadio Los Ángeles", isKnockout: true },
 
-  { date: "Lunes, 29 de junio 2026", time: "15:00", team1: "1º Grupo E", team2: "3º Grupo A/B/C/D/F", group: "Partido 74", stadium: "Estadio Boston", isKnockout: true },
-  { date: "Lunes, 29 de junio 2026", time: "15:00", team1: "1º Grupo F", team2: "2º Grupo C", group: "Partido 75", stadium: "Estadio Monterrey", isKnockout: true },
+  { date: "Lunes, 29 de junio 2026", time: "12:00", team1: "Brasil", team2: "Japón", group: "Partido 74", stadium: "Estadio Boston", isKnockout: true },
+  { date: "Lunes, 29 de junio 2026", time: "20:00", team1: "Países Bajos", team2: "Marruecos", group: "Partido 75", stadium: "Estadio Monterrey", isKnockout: true },
   { date: "Lunes, 29 de junio 2026", time: "15:00", team1: "1º Grupo E", team2: "2º Grupo F", group: "Partido 76", stadium: "Estadio Houston", isKnockout: true },
 
   { date: "Martes, 30 de junio 2026", time: "15:00", team1: "1º Grupo I", team2: "3º Grupo C/D/F/G/H", group: "Partido 77", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
   { date: "Martes, 30 de junio 2026", time: "15:00", team1: "2º Grupo E", team2: "2º Grupo I", group: "Partido 78", stadium: "Estadio Dallas", isKnockout: true },
   { date: "Martes, 30 de junio 2026", time: "15:00", team1: "1º Grupo A", team2: "3º Grupo C/E/F/H/I", group: "Partido 79", stadium: "Estadio Ciudad de México", isKnockout: true },
 
-  { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "1º Grupo L", team2: "3º Grupo E/H/I/J/K", group: "Partido 80", stadium: "Estadio Atlanta", isKnockout: true },
+  { date: "Miércoles, 1 de julio 2026", time: "19:00", team1: "Estados Unidos", team2: "Bosnia", group: "Partido 80", stadium: "Estadio Atlanta", isKnockout: true },
   { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "1º Grupo D", team2: "3º Grupo B/E/F/I/J", group: "Partido 81", stadium: "Estadio Bahía de San Francisco", isKnockout: true },
   { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "1º Grupo G", team2: "3º Grupo A/E/H/I/J", group: "Partido 82", stadium: "Estadio Seattle", isKnockout: true },
 
