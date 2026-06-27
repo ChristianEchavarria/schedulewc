@@ -99,10 +99,10 @@ window.WC_MATCHES = [
 
   { date: "Lunes, 29 de junio 2026", time: "12:00", team1: "Brasil", team2: "Japón", group: "Partido 74", stadium: "Estadio Boston", isKnockout: true },
   { date: "Lunes, 29 de junio 2026", time: "20:00", team1: "Países Bajos", team2: "Marruecos", group: "Partido 75", stadium: "Estadio Monterrey", isKnockout: true },
-  { date: "Lunes, 29 de junio 2026", time: "15:00", team1: "1º Grupo E", team2: "2º Grupo F", group: "Partido 76", stadium: "Estadio Houston", isKnockout: true },
+  { date: "Lunes, 29 de junio 2026", time: "15:30", team1: "Alemania", team2: "Paraguay", group: "Partido 76", stadium: "Estadio Houston", isKnockout: true },
 
-  { date: "Martes, 30 de junio 2026", time: "15:00", team1: "1º Grupo I", team2: "3º Grupo C/D/F/G/H", group: "Partido 77", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
-  { date: "Martes, 30 de junio 2026", time: "15:00", team1: "2º Grupo E", team2: "2º Grupo I", group: "Partido 78", stadium: "Estadio Dallas", isKnockout: true },
+  { date: "Martes, 30 de junio 2026", time: "12:00", team1: "Costa de Marfil", team2: "Noruega", group: "Partido 77", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
+  { date: "Martes, 30 de junio 2026", time: "16:00", team1: "Francia", team2: "Suecia", group: "Partido 78", stadium: "Estadio Dallas", isKnockout: true },
   { date: "Martes, 30 de junio 2026", time: "15:00", team1: "1º Grupo A", team2: "3º Grupo C/E/F/H/I", group: "Partido 79", stadium: "Estadio Ciudad de México", isKnockout: true },
 
   { date: "Miércoles, 1 de julio 2026", time: "19:00", team1: "Estados Unidos", team2: "Bosnia", group: "Partido 80", stadium: "Estadio Atlanta", isKnockout: true },
@@ -113,9 +113,9 @@ window.WC_MATCHES = [
   { date: "Jueves, 2 de julio 2026", time: "15:00", team1: "1º Grupo H", team2: "2º Grupo J", group: "Partido 84", stadium: "Estadio Los Ángeles", isKnockout: true },
   { date: "Jueves, 2 de julio 2026", time: "15:00", team1: "1º Grupo B", team2: "3º Grupo E/F/G/I/J", group: "Partido 85", stadium: "Estadio BC Place Vancouver", isKnockout: true },
 
-  { date: "Viernes, 3 de julio 2026", time: "15:00", team1: "1º Grupo J", team2: "2º Grupo H", group: "Partido 86", stadium: "Estadio Miami", isKnockout: true },
-  { date: "Viernes, 3 de julio 2026", time: "15:00", team1: "1º Grupo K", team2: "3º Grupo D/E/I/J/L", group: "Partido 87", stadium: "Estadio Kansas City", isKnockout: true },
-  { date: "Viernes, 3 de julio 2026", time: "15:00", team1: "2º Grupo D", team2: "2º Grupo G", group: "Partido 88", stadium: "Estadio Dallas", isKnockout: true },
+  { date: "Viernes, 3 de julio 2026", time: "13:00", team1: "Australia", team2: "Egipto", group: "Partido 86", stadium: "Estadio Miami", isKnockout: true },
+  { date: "Viernes, 3 de julio 2026", time: "17:00", team1: "Argentina", team2: "Cabo Verde", group: "Partido 87", stadium: "Estadio Kansas City", isKnockout: true },
+  { date: "Viernes, 3 de julio 2026", time: "20:30", team1: "A definir", team2: "A definir", group: "Partido 88", stadium: "Estadio Dallas", isKnockout: true },
 
   { date: "Sábado, 4 de julio 2026", time: "15:00", team1: "Ganador Partido 74", team2: "Ganador Partido 77", group: "Partido 89", stadium: "Estadio Filadelfia", isKnockout: true },
   { date: "Sábado, 4 de julio 2026", time: "15:00", team1: "Ganador Partido 73", team2: "Ganador Partido 75", group: "Partido 90", stadium: "Estadio Houston", isKnockout: true },
