@@ -103,15 +103,15 @@ window.WC_MATCHES = [
 
   { date: "Martes, 30 de junio 2026", time: "12:00", team1: "Costa de Marfil", team2: "Noruega", group: "Partido 77", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
   { date: "Martes, 30 de junio 2026", time: "16:00", team1: "Francia", team2: "Suecia", group: "Partido 78", stadium: "Estadio Dallas", isKnockout: true },
-  { date: "Martes, 30 de junio 2026", time: "15:00", team1: "1º Grupo A", team2: "3º Grupo C/E/F/H/I", group: "Partido 79", stadium: "Estadio Ciudad de México", isKnockout: true },
+  { date: "Martes, 30 de junio 2026", time: "20:00", team1: "México", team2: "Ecuador", group: "Partido 79", stadium: "Estadio Ciudad de México", isKnockout: true },
 
   { date: "Miércoles, 1 de julio 2026", time: "19:00", team1: "Estados Unidos", team2: "Bosnia", group: "Partido 80", stadium: "Estadio Atlanta", isKnockout: true },
-  { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "1º Grupo D", team2: "3º Grupo B/E/F/I/J", group: "Partido 81", stadium: "Estadio Bahía de San Francisco", isKnockout: true },
-  { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "1º Grupo G", team2: "3º Grupo A/E/H/I/J", group: "Partido 82", stadium: "Estadio Seattle", isKnockout: true },
+  { date: "Miércoles, 1 de julio 2026", time: "11:00", team1: "Inglaterra", team2: "RD Congo", group: "Partido 81", stadium: "Estadio Bahía de San Francisco", isKnockout: true },
+  { date: "Miércoles, 1 de julio 2026", time: "15:00", team1: "Bélgica", team2: "Senegal", group: "Partido 82", stadium: "Estadio Seattle", isKnockout: true },
 
-  { date: "Jueves, 2 de julio 2026", time: "15:00", team1: "2º Grupo K", team2: "2º Grupo L", group: "Partido 83", stadium: "Estadio Toronto", isKnockout: true },
-  { date: "Jueves, 2 de julio 2026", time: "15:00", team1: "1º Grupo H", team2: "2º Grupo J", group: "Partido 84", stadium: "Estadio Los Ángeles", isKnockout: true },
-  { date: "Jueves, 2 de julio 2026", time: "15:00", team1: "1º Grupo B", team2: "3º Grupo E/F/G/I/J", group: "Partido 85", stadium: "Estadio BC Place Vancouver", isKnockout: true },
+  { date: "Jueves, 2 de julio 2026", time: "14:00", team1: "España", team2: "Austria", group: "Partido 83", stadium: "Estadio Toronto", isKnockout: true },
+  { date: "Jueves, 2 de julio 2026", time: "18:00", team1: "Portugal", team2: "Croacia", group: "Partido 84", stadium: "Estadio Los Ángeles", isKnockout: true },
+  { date: "Jueves, 2 de julio 2026", time: "22:00", team1: "Suiza", team2: "Argelia", group: "Partido 85", stadium: "Estadio BC Place Vancouver", isKnockout: true },
 
   { date: "Viernes, 3 de julio 2026", time: "13:00", team1: "Australia", team2: "Egipto", group: "Partido 86", stadium: "Estadio Miami", isKnockout: true },
   { date: "Viernes, 3 de julio 2026", time: "17:00", team1: "Argentina", team2: "Cabo Verde", group: "Partido 87", stadium: "Estadio Kansas City", isKnockout: true },
