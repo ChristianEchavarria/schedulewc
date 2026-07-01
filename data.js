@@ -117,10 +117,10 @@ window.WC_MATCHES = [
   { date: "Viernes, 3 de julio 2026", time: "17:00", team1: "Argentina", team2: "Cabo Verde", group: "Partido 87", stadium: "Estadio Kansas City", isKnockout: true },
   { date: "Viernes, 3 de julio 2026", time: "20:30", team1: "Colombia", team2: "Ghana", group: "Partido 88", stadium: "Estadio Dallas", isKnockout: true },
 
-  { date: "Sábado, 4 de julio 2026", time: "15:00", team1: "Ganador Partido 74", team2: "Ganador Partido 77", group: "Partido 89", stadium: "Estadio Filadelfia", isKnockout: true },
-  { date: "Sábado, 4 de julio 2026", time: "15:00", team1: "Ganador Partido 73", team2: "Ganador Partido 75", group: "Partido 90", stadium: "Estadio Houston", isKnockout: true },
+  { date: "Sábado, 4 de julio 2026", time: "12:00", team1: "Canadá", team2: "Marruecos", group: "Partido 89", stadium: "Estadio Filadelfia", isKnockout: true },
+  { date: "Sábado, 4 de julio 2026", time: "16:00", team1: "Paraguay", team2: "Francia", group: "Partido 90", stadium: "Estadio Houston", isKnockout: true },
 
-  { date: "Domingo, 5 de julio 2026", time: "15:00", team1: "Ganador Partido 76", team2: "Ganador Partido 78", group: "Partido 91", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
+  { date: "Domingo, 5 de julio 2026", time: "15:00", team1: "Brasil", team2: "Noruega", group: "Partido 91", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
   { date: "Domingo, 5 de julio 2026", time: "15:00", team1: "Ganador Partido 79", team2: "Ganador Partido 80", group: "Partido 92", stadium: "Estadio Ciudad de México", isKnockout: true },
 
   { date: "Lunes, 6 de julio 2026", time: "15:00", team1: "Ganador Partido 83", team2: "Ganador Partido 84", group: "Partido 93", stadium: "Estadio Dallas", isKnockout: true },
