@@ -1731,22 +1731,10 @@ document.getElementById('loginPasswordForm').addEventListener('submit', (e) => {
     submitAdminPassword();
 });
 
-// Inicialización del rol
+// Inicialización del rol — SIEMPRE se pide "¿Quién está usando el sistema?" al entrar.
 renderLoginGrid();
-const savedRole = localStorage.getItem('currentRole');
-if (savedRole && getRole(savedRole)) {
-    currentRole = savedRole;
-    updateRolePill();
-    const r = getRole(currentRole);
-    if (r.isOperator && !r.isAnalyst) {
-        const personSelect = document.getElementById('personFilter');
-        if (personSelect) {
-            personSelect.value = r.id;
-            personFilter = r.id;
-        }
-    }
-    runAnalysis(scheduleData);
-} else {
-    updateRolePill();
-    showLogin();
-}
+currentRole = null;
+personFilter = 'all';
+updateRolePill();
+runAnalysis(scheduleData); // render base detrás del modal
+showLogin();

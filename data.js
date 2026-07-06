@@ -123,17 +123,17 @@ window.WC_MATCHES = [
   { date: "Domingo, 5 de julio 2026", time: "15:00", team1: "Brasil", team2: "Noruega", group: "Partido 91", stadium: "Estadio Nueva York Nueva Jersey", isKnockout: true },
   { date: "Domingo, 5 de julio 2026", time: "15:00", team1: "Ganador Partido 79", team2: "Ganador Partido 80", group: "Partido 92", stadium: "Estadio Ciudad de México", isKnockout: true },
 
-  { date: "Lunes, 6 de julio 2026", time: "15:00", team1: "Ganador Partido 83", team2: "Ganador Partido 84", group: "Partido 93", stadium: "Estadio Dallas", isKnockout: true },
-  { date: "Lunes, 6 de julio 2026", time: "15:00", team1: "Ganador Partido 81", team2: "Ganador Partido 82", group: "Partido 94", stadium: "Estadio Seattle", isKnockout: true },
+  { date: "Lunes, 6 de julio 2026", time: "14:00", team1: "Portugal", team2: "España", group: "Partido 93", stadium: "Estadio Dallas", isKnockout: true },
+  { date: "Lunes, 6 de julio 2026", time: "19:00", team1: "Estados Unidos", team2: "Bélgica", group: "Partido 94", stadium: "Estadio Seattle", isKnockout: true },
 
-  { date: "Martes, 7 de julio 2026", time: "15:00", team1: "Ganador Partido 86", team2: "Ganador Partido 88", group: "Partido 95", stadium: "Estadio Atlanta", isKnockout: true },
-  { date: "Martes, 7 de julio 2026", time: "15:00", team1: "Ganador Partido 85", team2: "Ganador Partido 87", group: "Partido 96", stadium: "Estadio BC Place Vancouver", isKnockout: true },
+  { date: "Martes, 7 de julio 2026", time: "11:00", team1: "Argentina", team2: "Egipto", group: "Partido 95", stadium: "Estadio Atlanta", isKnockout: true },
+  { date: "Martes, 7 de julio 2026", time: "15:00", team1: "Suiza", team2: "Colombia", group: "Partido 96", stadium: "Estadio BC Place Vancouver", isKnockout: true },
 
-  { date: "Jueves, 9 de julio 2026", time: "15:00", team1: "Ganador Partido 89", team2: "Ganador Partido 90", group: "Cuartos", stadium: "Estadio Boston", isKnockout: true },
+  { date: "Jueves, 9 de julio 2026", time: "15:00", team1: "Francia", team2: "Marruecos", group: "Cuartos", stadium: "Estadio Boston", isKnockout: true },
 
   { date: "Viernes, 10 de julio 2026", time: "15:00", team1: "Ganador Partido 93", team2: "Ganador Partido 94", group: "Cuartos", stadium: "Estadio Los Ángeles", isKnockout: true },
 
-  { date: "Sábado, 11 de julio 2026", time: "15:00", team1: "Ganador Partido 91", team2: "Ganador Partido 92", group: "Cuartos", stadium: "Estadio Miami", isKnockout: true },
+  { date: "Sábado, 11 de julio 2026", time: "16:00", team1: "Noruega", team2: "Inglaterra", group: "Cuartos", stadium: "Estadio Miami", isKnockout: true },
   { date: "Sábado, 11 de julio 2026", time: "15:00", team1: "Ganador Partido 95", team2: "Ganador Partido 96", group: "Cuartos", stadium: "Estadio Kansas City", isKnockout: true },
 
   { date: "Martes, 14 de julio 2026", time: "15:00", team1: "Ganador Partido 97", team2: "Ganador Partido 98", group: "Semifinal", stadium: "Estadio Dallas", isKnockout: true },
