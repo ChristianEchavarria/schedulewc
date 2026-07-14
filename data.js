@@ -136,9 +136,9 @@ window.WC_MATCHES = [
   { date: "Sábado, 11 de julio 2026", time: "16:00", team1: "Noruega", team2: "Inglaterra", group: "Cuartos", stadium: "Estadio Miami", isKnockout: true },
   { date: "Sábado, 11 de julio 2026", time: "20:00", team1: "Argentina", team2: "Suiza", group: "Cuartos", stadium: "Estadio Kansas City", isKnockout: true },
 
-  { date: "Martes, 14 de julio 2026", time: "15:00", team1: "Ganador Partido 97", team2: "Ganador Partido 98", group: "Semifinal", stadium: "Estadio Dallas", isKnockout: true },
+  { date: "Martes, 14 de julio 2026", time: "14:00", team1: "Francia", team2: "España", group: "Semifinal", stadium: "Estadio Dallas", isKnockout: true },
 
-  { date: "Miércoles, 15 de julio 2026", time: "15:00", team1: "Ganador Partido 99", team2: "Ganador Partido 100", group: "Semifinal", stadium: "Estadio Atlanta", isKnockout: true },
+  { date: "Miércoles, 15 de julio 2026", time: "14:00", team1: "Inglaterra", team2: "Argentina", group: "Semifinal", stadium: "Estadio Atlanta", isKnockout: true },
 
   { date: "Sábado, 18 de julio 2026", time: "15:00", team1: "Perdedor Partido 101", team2: "Perdedor Partido 102", group: "3er Puesto", stadium: "Estadio Miami", isKnockout: true },
 
